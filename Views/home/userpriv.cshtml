@@ -1,0 +1,113 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (userpriv.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!userpriv.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(userpriv.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { roles: currentTable } });
+var currentPageID = ew.PAGE_ID = "userpriv";
+var currentForm;
+var fuserpriv;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fuserpriv")
+        .setPageId("userpriv")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+var headerSortTristate = false,
+    tableOptions = {
+        locale: ew.LANGUAGE_ID,
+        langs: {
+
+            [ew.LANGUAGE_ID]: {
+                "data": {
+                    "loading": ew.language.phrase("Loading"),
+                    "error": ew.language.phrase("Error")
+                }
+            }
+        }
+    },
+    priv = @Html.Raw(ConvertToJson(userpriv.Privileges));
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.7.3",
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.7.3"
+], "tabulator");
+</script>
+<style>
+main .tooltip {
+    --bs-tooltip-max-width: 500px;
+}
+</style>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@userpriv.ShowMessages()
+<main>
+<form name="fuserpriv" id="fuserpriv" class="ew-form ew-user-priv-form w-100" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="x_id" id="x_id" value="@(userpriv.id.CurrentValue)">
+<div class="ew-desktop">
+<div class="card ew-card ew-user-priv">
+<div class="card-header">
+    <h3 class="card-title">@Html.Raw(Language.Phrase("UserLevel"))@Html.Raw(Security.GetUserLevelName(ConvertToString(userpriv.id.CurrentValue))) (@(userpriv.id.CurrentValue))</h3>
+    <div class="card-tools float-none float-sm-end">
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" name="table-name" id="table-name" class="form-control form-control-sm" placeholder="@(HtmlEncode(Language.Phrase("Search", true)))">
+        </div>
+    </div>
+</div>
+<div class="card-body ew-card-body p-0 @(userpriv.ResponsiveTableClass)"></div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-submit" id="btn-submit" type="submit" disabled="@(userpriv.Disabled)">@Html.Raw(Language.Phrase("Update"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(userpriv.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</div>
+</form>
+</main>
+<script>
+loadjs.ready("load", function() {
+    // Write your startup script here
+    // document.write("page loaded");
+});
+</script>
+<script>
+ew.ready(["load", "tabulator"], ew.PATH_BASE + "js/userpriv.min.js?v=20.7.3");
+</script>

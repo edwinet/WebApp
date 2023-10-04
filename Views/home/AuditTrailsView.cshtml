@@ -1,0 +1,197 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (auditTrailsView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!auditTrailsView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!auditTrailsView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!auditTrailsView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @auditTrailsView.ExportOptions.RenderBody()
+    @auditTrailsView.OtherOptions.RenderBody()
+</div>
+}
+@auditTrailsView.ShowPageHeader()
+@auditTrailsView.ShowMessages()
+<main class="view">
+@if (!auditTrailsView.IsModal) {
+if (!auditTrailsView.IsExport()) {
+@auditTrailsView.Pager.Render()
+}
+}
+<form name="faudit_trailsview" id="faudit_trailsview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!auditTrailsView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(auditTrailsView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { audit_trails: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var faudit_trailsview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("faudit_trailsview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(auditTrailsView.IsModal)">
+<table class="@(auditTrailsView.TableClass)">
+@if (auditTrailsView.id.Visible) { // auditTrailsView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(auditTrailsView.id.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails_id">@Html.Raw(auditTrailsView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(auditTrailsView.id.CellAttributes)>
+<span id="el_audit_trails_id">
+<span @Html.Raw(auditTrailsView.id.ViewAttributes)>
+@Html.Raw(auditTrailsView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView.id.Visible (end) *@
+@if (auditTrailsView.created_at.Visible) { // auditTrailsView.created_at.Visible (begin)
+    <tr id="r_created_at" @Html.Raw(auditTrailsView.created_at.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails_created_at">@Html.Raw(auditTrailsView.created_at.Caption)</span></td>
+        <td data-name="created_at" @Html.Raw(auditTrailsView.created_at.CellAttributes)>
+<span id="el_audit_trails_created_at">
+<span @Html.Raw(auditTrailsView.created_at.ViewAttributes)>
+@Html.Raw(auditTrailsView.created_at.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView.created_at.Visible (end) *@
+@if (auditTrailsView.script.Visible) { // auditTrailsView.script.Visible (begin)
+    <tr id="r_script" @Html.Raw(auditTrailsView.script.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails_script">@Html.Raw(auditTrailsView.script.Caption)</span></td>
+        <td data-name="script" @Html.Raw(auditTrailsView.script.CellAttributes)>
+<span id="el_audit_trails_script">
+<span @Html.Raw(auditTrailsView.script.ViewAttributes)>
+@Html.Raw(auditTrailsView.script.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView.script.Visible (end) *@
+@if (auditTrailsView._username.Visible) { // auditTrailsView._username.Visible (begin)
+    <tr id="r__username" @Html.Raw(auditTrailsView._username.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails__username">@Html.Raw(auditTrailsView._username.Caption)</span></td>
+        <td data-name="_username" @Html.Raw(auditTrailsView._username.CellAttributes)>
+<span id="el_audit_trails__username">
+<span @Html.Raw(auditTrailsView._username.ViewAttributes)>
+@Html.Raw(auditTrailsView._username.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView._username.Visible (end) *@
+@if (auditTrailsView._action.Visible) { // auditTrailsView._action.Visible (begin)
+    <tr id="r__action" @Html.Raw(auditTrailsView._action.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails__action">@Html.Raw(auditTrailsView._action.Caption)</span></td>
+        <td data-name="_action" @Html.Raw(auditTrailsView._action.CellAttributes)>
+<span id="el_audit_trails__action">
+<span @Html.Raw(auditTrailsView._action.ViewAttributes)>
+@Html.Raw(auditTrailsView._action.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView._action.Visible (end) *@
+@if (auditTrailsView.entity.Visible) { // auditTrailsView.entity.Visible (begin)
+    <tr id="r_entity" @Html.Raw(auditTrailsView.entity.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails_entity">@Html.Raw(auditTrailsView.entity.Caption)</span></td>
+        <td data-name="entity" @Html.Raw(auditTrailsView.entity.CellAttributes)>
+<span id="el_audit_trails_entity">
+<span @Html.Raw(auditTrailsView.entity.ViewAttributes)>
+@Html.Raw(auditTrailsView.entity.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView.entity.Visible (end) *@
+@if (auditTrailsView._field.Visible) { // auditTrailsView._field.Visible (begin)
+    <tr id="r__field" @Html.Raw(auditTrailsView._field.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails__field">@Html.Raw(auditTrailsView._field.Caption)</span></td>
+        <td data-name="_field" @Html.Raw(auditTrailsView._field.CellAttributes)>
+<span id="el_audit_trails__field">
+<span @Html.Raw(auditTrailsView._field.ViewAttributes)>
+@Html.Raw(auditTrailsView._field.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView._field.Visible (end) *@
+@if (auditTrailsView.key_value.Visible) { // auditTrailsView.key_value.Visible (begin)
+    <tr id="r_key_value" @Html.Raw(auditTrailsView.key_value.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails_key_value">@Html.Raw(auditTrailsView.key_value.Caption)</span></td>
+        <td data-name="key_value" @Html.Raw(auditTrailsView.key_value.CellAttributes)>
+<span id="el_audit_trails_key_value">
+<span @Html.Raw(auditTrailsView.key_value.ViewAttributes)>
+@Html.Raw(auditTrailsView.key_value.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView.key_value.Visible (end) *@
+@if (auditTrailsView.old_value.Visible) { // auditTrailsView.old_value.Visible (begin)
+    <tr id="r_old_value" @Html.Raw(auditTrailsView.old_value.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails_old_value">@Html.Raw(auditTrailsView.old_value.Caption)</span></td>
+        <td data-name="old_value" @Html.Raw(auditTrailsView.old_value.CellAttributes)>
+<span id="el_audit_trails_old_value">
+<span @Html.Raw(auditTrailsView.old_value.ViewAttributes)>
+@Html.Raw(auditTrailsView.old_value.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView.old_value.Visible (end) *@
+@if (auditTrailsView.new_value.Visible) { // auditTrailsView.new_value.Visible (begin)
+    <tr id="r_new_value" @Html.Raw(auditTrailsView.new_value.RowAttributes)>
+        <td class="@(auditTrailsView.TableLeftColumnClass)"><span id="elh_audit_trails_new_value">@Html.Raw(auditTrailsView.new_value.Caption)</span></td>
+        <td data-name="new_value" @Html.Raw(auditTrailsView.new_value.CellAttributes)>
+<span id="el_audit_trails_new_value">
+<span @Html.Raw(auditTrailsView.new_value.ViewAttributes)>
+@Html.Raw(auditTrailsView.new_value.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* auditTrailsView.new_value.Visible (end) *@
+</table>
+@{ auditTrailsView.CloseRecordset(); }
+</form>
+@if (!auditTrailsView.IsModal) {
+if (!auditTrailsView.IsExport()) {
+<div><!-- DN -->
+@auditTrailsView.Pager.Render()
+</div>
+}
+}
+</main>
+@auditTrailsView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!auditTrailsView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

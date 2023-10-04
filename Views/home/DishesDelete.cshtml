@@ -1,0 +1,176 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (dishesDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!dishesDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(dishesDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { dishes: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var fdishesdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fdishesdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@dishesDelete.ShowPageHeader()
+@dishesDelete.ShowMessages()
+<form name="fdishesdelete" id="fdishesdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in dishesDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(dishesDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(dishesDelete.TableContainerClass)" style="@(dishesDelete.TableContainerStyle)">
+<table class="@(dishesDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (dishesDelete.id.Visible) { // dishesDelete.id.Visible (begin)
+        <th class="@Html.Raw(dishesDelete.id.HeaderCellClass)"><span id="elh_dishes_id" class="dishes_id">@Html.Raw(dishesDelete.id.Caption)</span></th>
+} @* dishesDelete.id.Visible (end) *@
+@if (dishesDelete._name.Visible) { // dishesDelete._name.Visible (begin)
+        <th class="@Html.Raw(dishesDelete._name.HeaderCellClass)"><span id="elh_dishes__name" class="dishes__name">@Html.Raw(dishesDelete._name.Caption)</span></th>
+} @* dishesDelete._name.Visible (end) *@
+@if (dishesDelete.description.Visible) { // dishesDelete.description.Visible (begin)
+        <th class="@Html.Raw(dishesDelete.description.HeaderCellClass)"><span id="elh_dishes_description" class="dishes_description">@Html.Raw(dishesDelete.description.Caption)</span></th>
+} @* dishesDelete.description.Visible (end) *@
+@if (dishesDelete.image.Visible) { // dishesDelete.image.Visible (begin)
+        <th class="@Html.Raw(dishesDelete.image.HeaderCellClass)"><span id="elh_dishes_image" class="dishes_image">@Html.Raw(dishesDelete.image.Caption)</span></th>
+} @* dishesDelete.image.Visible (end) *@
+@if (dishesDelete.price.Visible) { // dishesDelete.price.Visible (begin)
+        <th class="@Html.Raw(dishesDelete.price.HeaderCellClass)"><span id="elh_dishes_price" class="dishes_price">@Html.Raw(dishesDelete.price.Caption)</span></th>
+} @* dishesDelete.price.Visible (end) *@
+@if (dishesDelete.restaurant_id.Visible) { // dishesDelete.restaurant_id.Visible (begin)
+        <th class="@Html.Raw(dishesDelete.restaurant_id.HeaderCellClass)"><span id="elh_dishes_restaurant_id" class="dishes_restaurant_id">@Html.Raw(dishesDelete.restaurant_id.Caption)</span></th>
+} @* dishesDelete.restaurant_id.Visible (end) *@
+@if (dishesDelete.created_at.Visible) { // dishesDelete.created_at.Visible (begin)
+        <th class="@Html.Raw(dishesDelete.created_at.HeaderCellClass)"><span id="elh_dishes_created_at" class="dishes_created_at">@Html.Raw(dishesDelete.created_at.Caption)</span></th>
+} @* dishesDelete.created_at.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ dishesDelete.RecordCount = 0; }
+@while (dishesDelete.Recordset != null && await dishesDelete.Recordset.ReadAsync()) { // DN
+    dishesDelete.RecordCount++;
+    dishesDelete.RowCount++;
+
+    // Set row properties
+    dishesDelete.ResetAttributes();
+    dishesDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await dishesDelete.LoadRowValues(dishesDelete.Recordset);
+
+    // Render row
+    await dishesDelete.RenderRow();
+    <tr @Html.Raw(dishesDelete.RowAttributes)>
+@if (dishesDelete.id.Visible) { // dishesDelete.id.Visible (begin)
+        <td @Html.Raw(dishesDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(dishesDelete.id.ViewAttributes)>
+@Html.Raw(dishesDelete.id.GetViewValue())</span>
+</span></td>
+} @* dishesDelete.id.Visible (end) *@
+@if (dishesDelete._name.Visible) { // dishesDelete._name.Visible (begin)
+        <td @Html.Raw(dishesDelete._name.CellAttributes)>
+<span id="">
+<span @Html.Raw(dishesDelete._name.ViewAttributes)>
+@Html.Raw(dishesDelete._name.GetViewValue())</span>
+</span></td>
+} @* dishesDelete._name.Visible (end) *@
+@if (dishesDelete.description.Visible) { // dishesDelete.description.Visible (begin)
+        <td @Html.Raw(dishesDelete.description.CellAttributes)>
+<span id="">
+<span @Html.Raw(dishesDelete.description.ViewAttributes)>
+@Html.Raw(dishesDelete.description.GetViewValue())</span>
+</span></td>
+} @* dishesDelete.description.Visible (end) *@
+@if (dishesDelete.image.Visible) { // dishesDelete.image.Visible (begin)
+        <td @Html.Raw(dishesDelete.image.CellAttributes)>
+<span id="">
+<span>
+@Html.Raw(await GetFileViewTag((DbField)dishesDelete.image, ConvertToString(dishesDelete.image.GetViewValue()), false))
+</span>
+</span></td>
+} @* dishesDelete.image.Visible (end) *@
+@if (dishesDelete.price.Visible) { // dishesDelete.price.Visible (begin)
+        <td @Html.Raw(dishesDelete.price.CellAttributes)>
+<span id="">
+<span @Html.Raw(dishesDelete.price.ViewAttributes)>
+@Html.Raw(dishesDelete.price.GetViewValue())</span>
+</span></td>
+} @* dishesDelete.price.Visible (end) *@
+@if (dishesDelete.restaurant_id.Visible) { // dishesDelete.restaurant_id.Visible (begin)
+        <td @Html.Raw(dishesDelete.restaurant_id.CellAttributes)>
+<span id="">
+<span @Html.Raw(dishesDelete.restaurant_id.ViewAttributes)>
+@Html.Raw(dishesDelete.restaurant_id.GetViewValue())</span>
+</span></td>
+} @* dishesDelete.restaurant_id.Visible (end) *@
+@if (dishesDelete.created_at.Visible) { // dishesDelete.created_at.Visible (begin)
+        <td @Html.Raw(dishesDelete.created_at.CellAttributes)>
+<span id="">
+<span @Html.Raw(dishesDelete.created_at.ViewAttributes)>
+@Html.Raw(dishesDelete.created_at.GetViewValue())</span>
+</span></td>
+} @* dishesDelete.created_at.Visible (end) *@
+    </tr>
+}
+@{ dishesDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(dishesDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@dishesDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

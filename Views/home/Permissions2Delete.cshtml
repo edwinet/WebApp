@@ -1,0 +1,135 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (permissions2Delete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!permissions2Delete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(permissions2Delete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { permissions2: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var fpermissions2delete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fpermissions2delete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@permissions2Delete.ShowPageHeader()
+@permissions2Delete.ShowMessages()
+<form name="fpermissions2delete" id="fpermissions2delete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string[] key in permissions2Delete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@String.Join(Config.CompositeKeySeparator, key)">
+}
+<div class="card ew-card ew-grid @(permissions2Delete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(permissions2Delete.TableContainerClass)" style="@(permissions2Delete.TableContainerStyle)">
+<table class="@(permissions2Delete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (permissions2Delete.entity.Visible) { // permissions2Delete.entity.Visible (begin)
+        <th class="@Html.Raw(permissions2Delete.entity.HeaderCellClass)"><span id="elh_permissions2_entity" class="permissions2_entity">@Html.Raw(permissions2Delete.entity.Caption)</span></th>
+} @* permissions2Delete.entity.Visible (end) *@
+@if (permissions2Delete.role_id.Visible) { // permissions2Delete.role_id.Visible (begin)
+        <th class="@Html.Raw(permissions2Delete.role_id.HeaderCellClass)"><span id="elh_permissions2_role_id" class="permissions2_role_id">@Html.Raw(permissions2Delete.role_id.Caption)</span></th>
+} @* permissions2Delete.role_id.Visible (end) *@
+@if (permissions2Delete.permission.Visible) { // permissions2Delete.permission.Visible (begin)
+        <th class="@Html.Raw(permissions2Delete.permission.HeaderCellClass)"><span id="elh_permissions2_permission" class="permissions2_permission">@Html.Raw(permissions2Delete.permission.Caption)</span></th>
+} @* permissions2Delete.permission.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ permissions2Delete.RecordCount = 0; }
+@while (permissions2Delete.Recordset != null && await permissions2Delete.Recordset.ReadAsync()) { // DN
+    permissions2Delete.RecordCount++;
+    permissions2Delete.RowCount++;
+
+    // Set row properties
+    permissions2Delete.ResetAttributes();
+    permissions2Delete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await permissions2Delete.LoadRowValues(permissions2Delete.Recordset);
+
+    // Render row
+    await permissions2Delete.RenderRow();
+    <tr @Html.Raw(permissions2Delete.RowAttributes)>
+@if (permissions2Delete.entity.Visible) { // permissions2Delete.entity.Visible (begin)
+        <td @Html.Raw(permissions2Delete.entity.CellAttributes)>
+<span id="">
+<span @Html.Raw(permissions2Delete.entity.ViewAttributes)>
+@Html.Raw(permissions2Delete.entity.GetViewValue())</span>
+</span></td>
+} @* permissions2Delete.entity.Visible (end) *@
+@if (permissions2Delete.role_id.Visible) { // permissions2Delete.role_id.Visible (begin)
+        <td @Html.Raw(permissions2Delete.role_id.CellAttributes)>
+<span id="">
+<span @Html.Raw(permissions2Delete.role_id.ViewAttributes)>
+@Html.Raw(permissions2Delete.role_id.GetViewValue())</span>
+</span></td>
+} @* permissions2Delete.role_id.Visible (end) *@
+@if (permissions2Delete.permission.Visible) { // permissions2Delete.permission.Visible (begin)
+        <td @Html.Raw(permissions2Delete.permission.CellAttributes)>
+<span id="">
+<span @Html.Raw(permissions2Delete.permission.ViewAttributes)>
+@Html.Raw(permissions2Delete.permission.GetViewValue())</span>
+</span></td>
+} @* permissions2Delete.permission.Visible (end) *@
+    </tr>
+}
+@{ permissions2Delete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(permissions2Delete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@permissions2Delete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

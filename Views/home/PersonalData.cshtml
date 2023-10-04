@@ -1,0 +1,109 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (personalData.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!personalData.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@personalData.ShowMessages()
+@if (RouteValues.TryGetValue("cmd", out object? command) && SameText("Delete", command))
+{ // DN
+    <script>
+    var fpersonal_data;
+    loadjs.ready(["wrapper", "head"], function() {
+        let $ = jQuery;
+        let form = new ew.FormBuilder()
+            .setId("fpersonal_data")
+            // Add field
+            .addFields([
+
+                ["password", ew.Validators.required(ew.language.phrase("Password")), @(personalData.Password.IsInvalid ? "true" : "false")]
+            ])
+            // Extend page with Validate function
+            .setValidate(
+                function() {
+                    if (!this.validateRequired)
+                        return true; // Ignore validation
+
+                    // Validate fields
+                    if (!this.validateFields())
+                        return false;
+                    return true;
+                }
+            )
+            // Use JavaScript validation
+            .setValidateRequired(ew.CLIENT_VALIDATE)
+            .build();
+        window[form.id] = form;
+        loadjs.done(form.id);
+    });
+    </script>
+    <div class="alert alert-danger d-inline-block">
+        <i class="icon fa-solid fa-ban"></i>@Html.Raw(Language.Phrase("PersonalDataWarning"))
+    </div>
+if (!Empty(personalData.FailureMessage)) {
+    <div class="text-danger">
+        <ul>
+            <li>@Html.Raw(personalData.FailureMessage)</li>
+        </ul>
+    </div>
+}
+    <div class="container-fluid">
+        <form name="fpersonal_data" class="ew-form ew-personaldata-form" id="fpersonal_data" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+            <div class="text-danger"></div>
+            <div class="row">
+                <div class="col-sm-auto">
+                    <label id="label" class="control-label ew-label">@Html.Raw(Language.Phrase("Password"))</label>
+                </div>
+                <div class="col-sm-auto">
+                    <div class="input-group">
+                        <input type="password" name="@Html.Raw(personalData.Password.FieldVar)" id="@Html.Raw(personalData.Password.FieldVar)" autocomplete="current-password" placeholder="@Html.Raw(Language.Phrase("Password", true))" @Html.Raw(personalData.Password.EditAttributes)>
+                        <button type="button" class="btn btn-default ew-toggle-password rounded-end" data-ew-action="password"><i class="fa-solid fa-eye"></i></button>
+                        <div class="invalid-feedback">@Html.Raw(personalData.Password.GetErrorMessage())</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-auto">
+                    <button class="btn btn-primary" type="submit">@Html.Raw(Language.Phrase("CloseAccountBtn"))</button>
+                </div>
+            </div>
+        </form>
+    </div>
+} else {
+    <div class="row">
+        <div class="col">
+            <p>@Html.Raw(Language.Phrase("PersonalDataContent"))</p>
+            <div class="alert alert-danger d-inline-block">
+                <i class="icon fa-solid fa-ban"></i>@Html.Raw(Language.Phrase("PersonalDataWarning"))
+            </div>
+            <p>
+                <a id="download" href="@HtmlEncode(AppPath("PersonalData/Download"))" class="btn btn-default">@Html.Raw(Language.Phrase("DownloadBtn"))</a>
+                <a id="delete" href="@HtmlEncode(AppPath("PersonalData/Delete"))" class="btn btn-default">@Html.Raw(Language.Phrase("DeleteBtn"))</a>
+            </p>
+        </div>
+    </div>
+}
+@{ personalData.ClearFailureMessage(); }

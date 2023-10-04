@@ -1,0 +1,198 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (dishesView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!dishesView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!dishesView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!dishesView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @dishesView.ExportOptions.RenderBody()
+    @dishesView.OtherOptions.RenderBody()
+</div>
+}
+@dishesView.ShowPageHeader()
+@dishesView.ShowMessages()
+<main class="view">
+@if (!dishesView.IsModal) {
+if (!dishesView.IsExport()) {
+@dishesView.Pager.Render()
+}
+}
+<form name="fdishesview" id="fdishesview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!dishesView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(dishesView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { dishes: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var fdishesview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fdishesview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(dishesView.IsModal)">
+<table class="@(dishesView.TableClass)">
+@if (dishesView.id.Visible) { // dishesView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(dishesView.id.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_id">@Html.Raw(dishesView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(dishesView.id.CellAttributes)>
+<span id="el_dishes_id">
+<span @Html.Raw(dishesView.id.ViewAttributes)>
+@Html.Raw(dishesView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView.id.Visible (end) *@
+@if (dishesView._name.Visible) { // dishesView._name.Visible (begin)
+    <tr id="r__name" @Html.Raw(dishesView._name.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes__name">@Html.Raw(dishesView._name.Caption)</span></td>
+        <td data-name="_name" @Html.Raw(dishesView._name.CellAttributes)>
+<span id="el_dishes__name">
+<span @Html.Raw(dishesView._name.ViewAttributes)>
+@Html.Raw(dishesView._name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView._name.Visible (end) *@
+@if (dishesView.description.Visible) { // dishesView.description.Visible (begin)
+    <tr id="r_description" @Html.Raw(dishesView.description.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_description">@Html.Raw(dishesView.description.Caption)</span></td>
+        <td data-name="description" @Html.Raw(dishesView.description.CellAttributes)>
+<span id="el_dishes_description">
+<span @Html.Raw(dishesView.description.ViewAttributes)>
+@Html.Raw(dishesView.description.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView.description.Visible (end) *@
+@if (dishesView.image.Visible) { // dishesView.image.Visible (begin)
+    <tr id="r_image" @Html.Raw(dishesView.image.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_image">@Html.Raw(dishesView.image.Caption)</span></td>
+        <td data-name="image" @Html.Raw(dishesView.image.CellAttributes)>
+<span id="el_dishes_image">
+<span>
+@Html.Raw(await GetFileViewTag((DbField)dishesView.image, ConvertToString(dishesView.image.GetViewValue()), false))
+</span>
+</span></td>
+    </tr>
+} @* dishesView.image.Visible (end) *@
+@if (dishesView.price.Visible) { // dishesView.price.Visible (begin)
+    <tr id="r_price" @Html.Raw(dishesView.price.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_price">@Html.Raw(dishesView.price.Caption)</span></td>
+        <td data-name="price" @Html.Raw(dishesView.price.CellAttributes)>
+<span id="el_dishes_price">
+<span @Html.Raw(dishesView.price.ViewAttributes)>
+@Html.Raw(dishesView.price.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView.price.Visible (end) *@
+@if (dishesView.restaurant_id.Visible) { // dishesView.restaurant_id.Visible (begin)
+    <tr id="r_restaurant_id" @Html.Raw(dishesView.restaurant_id.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_restaurant_id">@Html.Raw(dishesView.restaurant_id.Caption)</span></td>
+        <td data-name="restaurant_id" @Html.Raw(dishesView.restaurant_id.CellAttributes)>
+<span id="el_dishes_restaurant_id">
+<span @Html.Raw(dishesView.restaurant_id.ViewAttributes)>
+@Html.Raw(dishesView.restaurant_id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView.restaurant_id.Visible (end) *@
+@if (dishesView.created_at.Visible) { // dishesView.created_at.Visible (begin)
+    <tr id="r_created_at" @Html.Raw(dishesView.created_at.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_created_at">@Html.Raw(dishesView.created_at.Caption)</span></td>
+        <td data-name="created_at" @Html.Raw(dishesView.created_at.CellAttributes)>
+<span id="el_dishes_created_at">
+<span @Html.Raw(dishesView.created_at.ViewAttributes)>
+@Html.Raw(dishesView.created_at.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView.created_at.Visible (end) *@
+@if (dishesView.updated_at.Visible) { // dishesView.updated_at.Visible (begin)
+    <tr id="r_updated_at" @Html.Raw(dishesView.updated_at.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_updated_at">@Html.Raw(dishesView.updated_at.Caption)</span></td>
+        <td data-name="updated_at" @Html.Raw(dishesView.updated_at.CellAttributes)>
+<span id="el_dishes_updated_at">
+<span @Html.Raw(dishesView.updated_at.ViewAttributes)>
+@Html.Raw(dishesView.updated_at.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView.updated_at.Visible (end) *@
+@if (dishesView.created_by.Visible) { // dishesView.created_by.Visible (begin)
+    <tr id="r_created_by" @Html.Raw(dishesView.created_by.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_created_by">@Html.Raw(dishesView.created_by.Caption)</span></td>
+        <td data-name="created_by" @Html.Raw(dishesView.created_by.CellAttributes)>
+<span id="el_dishes_created_by">
+<span @Html.Raw(dishesView.created_by.ViewAttributes)>
+@Html.Raw(dishesView.created_by.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView.created_by.Visible (end) *@
+@if (dishesView.updated_by.Visible) { // dishesView.updated_by.Visible (begin)
+    <tr id="r_updated_by" @Html.Raw(dishesView.updated_by.RowAttributes)>
+        <td class="@(dishesView.TableLeftColumnClass)"><span id="elh_dishes_updated_by">@Html.Raw(dishesView.updated_by.Caption)</span></td>
+        <td data-name="updated_by" @Html.Raw(dishesView.updated_by.CellAttributes)>
+<span id="el_dishes_updated_by">
+<span @Html.Raw(dishesView.updated_by.ViewAttributes)>
+@Html.Raw(dishesView.updated_by.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* dishesView.updated_by.Visible (end) *@
+</table>
+@{ dishesView.CloseRecordset(); }
+</form>
+@if (!dishesView.IsModal) {
+if (!dishesView.IsExport()) {
+<div><!-- DN -->
+@dishesView.Pager.Render()
+</div>
+}
+}
+</main>
+@dishesView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!dishesView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

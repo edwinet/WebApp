@@ -1,0 +1,215 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (restaurantsEdit.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!restaurantsEdit.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@restaurantsEdit.ShowPageHeader()
+@restaurantsEdit.ShowMessages()
+<main class="edit">
+@if (!restaurantsEdit.IsModal) {
+@restaurantsEdit.Pager.Render()
+}
+<form name="frestaurantsedit" id="frestaurantsedit" class="@(restaurantsEdit.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+<script>
+var currentTable = @Html.Raw(ConvertToJson(restaurantsEdit.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { restaurants: currentTable } });
+var currentPageID = ew.PAGE_ID = "edit";
+var currentForm;
+var frestaurantsedit;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("frestaurantsedit")
+        .setPageId("edit")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null], fields.id.isInvalid],
+            ["_name", [fields._name.visible && fields._name.required ? ew.Validators.required(fields._name.caption) : null], fields._name.isInvalid],
+            ["description", [fields.description.visible && fields.description.required ? ew.Validators.required(fields.description.caption) : null], fields.description.isInvalid],
+            ["image", [fields.image.visible && fields.image.required ? ew.Validators.fileRequired(fields.image.caption) : null], fields.image.isInvalid],
+            ["created_at", [fields.created_at.visible && fields.created_at.required ? ew.Validators.required(fields.created_at.caption) : null], fields.created_at.isInvalid],
+            ["updated_at", [fields.updated_at.visible && fields.updated_at.required ? ew.Validators.required(fields.updated_at.caption) : null], fields.updated_at.isInvalid],
+            ["created_by", [fields.created_by.visible && fields.created_by.required ? ew.Validators.required(fields.created_by.caption) : null], fields.created_by.isInvalid],
+            ["updated_by", [fields.updated_by.visible && fields.updated_by.required ? ew.Validators.required(fields.updated_by.caption) : null], fields.updated_by.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+            "updated_by": @Html.Raw(restaurantsEdit.updated_by.ToClientList(restaurantsEdit)),
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@ConvertToInt(restaurantsEdit.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(restaurantsEdit.OldKeyName)" value="@Html.Raw(restaurantsEdit.OldKey)">
+<div class="ew-edit-div"><!-- page* -->
+@if (restaurantsEdit.id.Visible) { // restaurantsEdit.id.Visible (begin)
+    <div id="r_id" @Html.Raw(restaurantsEdit.id.RowAttributes)>
+        <label id="elh_restaurants_id" class="@(restaurantsEdit.LeftColumnClass)">@Html.Raw(restaurantsEdit.id.Caption)@Html.Raw(restaurantsEdit.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(restaurantsEdit.RightColumnClass)"><div @Html.Raw(restaurantsEdit.id.CellAttributes)>
+<span id="el_restaurants_id">
+<span @Html.Raw(restaurantsEdit.id.ViewAttributes)>
+<input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(restaurantsEdit.id.EditValue)))"></span>
+<input type="hidden" data-table="restaurants" data-field="x_id" data-hidden="1" name="x_id" id="x_id" value="@Html.Raw(HtmlEncode(restaurantsEdit.id.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* restaurantsEdit.id.Visible (end) *@
+@if (restaurantsEdit._name.Visible) { // restaurantsEdit._name.Visible (begin)
+    <div id="r__name" @Html.Raw(restaurantsEdit._name.RowAttributes)>
+        <label id="elh_restaurants__name" for="x__name" class="@(restaurantsEdit.LeftColumnClass)">@Html.Raw(restaurantsEdit._name.Caption)@Html.Raw(restaurantsEdit._name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(restaurantsEdit.RightColumnClass)"><div @Html.Raw(restaurantsEdit._name.CellAttributes)>
+<span id="el_restaurants__name">
+<input type="@(restaurantsEdit._name.InputTextType)" name="x__name" id="x__name" data-table="restaurants" data-field="x__name" value="@Html.Raw(restaurantsEdit._name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(restaurantsEdit._name.PlaceHolder))" data-format-pattern="@(restaurantsEdit._name.FormatPattern)"@Html.Raw(restaurantsEdit._name.EditAttributes) aria-describedby="x__name_help">
+@Html.Raw(restaurantsEdit._name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(restaurantsEdit._name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* restaurantsEdit._name.Visible (end) *@
+@if (restaurantsEdit.description.Visible) { // restaurantsEdit.description.Visible (begin)
+    <div id="r_description" @Html.Raw(restaurantsEdit.description.RowAttributes)>
+        <label id="elh_restaurants_description" class="@(restaurantsEdit.LeftColumnClass)">@Html.Raw(restaurantsEdit.description.Caption)@Html.Raw(restaurantsEdit.description.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(restaurantsEdit.RightColumnClass)"><div @Html.Raw(restaurantsEdit.description.CellAttributes)>
+<span id="el_restaurants_description">
+@{ restaurantsEdit.description.EditAttrs.AppendClass("editor"); }
+<textarea data-table="restaurants" data-field="x_description" name="x_description" id="x_description" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(restaurantsEdit.description.PlaceHolder))"@Html.Raw(restaurantsEdit.description.EditAttributes) aria-describedby="x_description_help">@(restaurantsEdit.description.EditValue)</textarea>
+@Html.Raw(restaurantsEdit.description.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(restaurantsEdit.description.GetErrorMessage())</div>
+<script>
+loadjs.ready(["frestaurantsedit", "editor"], function() {
+    ew.createEditor("frestaurantsedit", "x_description", 35, 4, @(restaurantsEdit.description.ReadOnly || false ? "true" : "false"));
+});
+</script>
+</span>
+</div></div>
+    </div>
+} @* restaurantsEdit.description.Visible (end) *@
+@if (restaurantsEdit.image.Visible) { // restaurantsEdit.image.Visible (begin)
+    <div id="r_image" @Html.Raw(restaurantsEdit.image.RowAttributes)>
+        <label id="elh_restaurants_image" class="@(restaurantsEdit.LeftColumnClass)">@Html.Raw(restaurantsEdit.image.Caption)@Html.Raw(restaurantsEdit.image.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(restaurantsEdit.RightColumnClass)"><div @Html.Raw(restaurantsEdit.image.CellAttributes)>
+<span id="el_restaurants_image">
+<div id="fd_x_image" class="fileinput-button ew-file-drop-zone">
+    <input
+        type="file"
+        id="x_image"
+        name="x_image"
+        class="form-control ew-file-input"
+        title="@(restaurantsEdit.image.Title)"
+        lang="@(CurrentLanguageID)"
+        data-table="restaurants"
+        data-field="x_image"
+        data-size="255"
+        data-accept-file-types="@(restaurantsEdit.image.AcceptFileTypes)"
+        data-max-file-size="@(restaurantsEdit.image.UploadMaxFileSize)"
+        data-max-number-of-files="null"
+        data-disable-image-crop="@(restaurantsEdit.image.ImageCropper ? 0 : 1)"
+        aria-describedby="x_image_help"
+        @Html.Raw((restaurantsEdit.image.ReadOnly || restaurantsEdit.image.Disabled) ? " disabled" : "")
+        @Html.Raw(restaurantsEdit.image.EditAttributes)
+    >
+    <div class="text-muted ew-file-text">@Html.Raw(Language.Phrase("ChooseFile"))</div>
+</div>
+@Html.Raw(restaurantsEdit.image.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(restaurantsEdit.image.GetErrorMessage())</div>
+<input type="hidden" name="fn_x_image" id= "fn_x_image" value="@(restaurantsEdit.image.Upload.FileName)">
+<input type="hidden" name="fa_x_image" id= "fa_x_image" value="@(Post("fa_x_image") == "0" ? "0" : "1")">
+<table id="ft_x_image" class="table table-sm float-start ew-upload-table"><tbody class="files"></tbody></table>
+</span>
+</div></div>
+    </div>
+} @* restaurantsEdit.image.Visible (end) *@
+</div><!-- /page* -->
+@{ restaurantsEdit.CloseRecordset(); }
+@if (restaurantsEdit.CurrentDetailTables.Contains("dishes") && dishes.DetailEdit) {
+    if (!Empty(restaurantsEdit.CurrentDetailTable)) {
+<h4 class="ew-detail-caption">@Html.Raw(Language.TablePhrase("dishes", "TblCaption"))</h4>
+    }
+        @await Html.PartialAsync("dishesgrid")
+    View = this;
+}
+@Html.Raw(restaurantsEdit.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(restaurantsEdit.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="frestaurantsedit">@Html.Raw(Language.Phrase("SaveBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="frestaurantsedit" data-href="@AppPath(restaurantsEdit.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(restaurantsEdit.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@if (!restaurantsEdit.IsModal) {
+<div><!-- DN -->
+@restaurantsEdit.Pager.Render()
+</div>
+}
+</main>
+@restaurantsEdit.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("restaurants");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

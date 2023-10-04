@@ -1,0 +1,331 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (exportLogsSearch.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!exportLogsSearch.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(exportLogsSearch.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { export_logs: currentTable } });
+var currentPageID = ew.PAGE_ID = "search";
+var currentForm;
+var fexport_logssearch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fexport_logssearch")
+        .setPageId("search")
+@if (exportLogsSearch.IsModal && exportLogsSearch.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Add fields
+        .setFields([
+
+            ["file_id", [ew.Validators.guid], fields.file_id.isInvalid],
+            ["created_at", [ew.Validators.datetime(fields.created_at.clientFormatPattern)], fields.created_at.isInvalid],
+            ["_username", [], fields._username.isInvalid],
+            ["export_type", [], fields.export_type.isInvalid],
+            ["entity", [], fields.entity.isInvalid],
+            ["key_value", [], fields.key_value.isInvalid],
+            ["filename", [], fields.filename.isInvalid],
+            ["_request", [], fields._request.isInvalid]
+        ])
+        // Validate form
+        .setValidate(
+            async function () {
+                if (!this.validateRequired)
+                    return true; // Ignore validation
+                let fobj = this.getForm();
+
+                // Validate fields
+                if (!this.validateFields())
+                    return false;
+
+                // Call Form_CustomValidate event
+                if (!(await this.customValidate?.(fobj) ?? true)) {
+                    this.focus();
+                    return false;
+                }
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+@if (exportLogsSearch.IsModal) {
+    <text>currentAdvancedSearchForm = form;</text>
+} else {
+    <text>currentForm = form;</text>
+}
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@exportLogsSearch.ShowPageHeader()
+@exportLogsSearch.ShowMessages()
+<form name="fexport_logssearch" id="fexport_logssearch" class="@(exportLogsSearch.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="search">
+@if (exportLogsSearch.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div class="ew-search-div"><!-- page* -->
+@if (exportLogsSearch.file_id.Visible) { // exportLogsSearch.file_id.Visible (begin)
+    <div id="r_file_id" class="row" @Html.Raw(exportLogsSearch.file_id.RowAttributes)>
+        <label for="x_file_id" class="@(exportLogsSearch.LeftColumnClass)"><span id="elh_export_logs_file_id">@Html.Raw(exportLogsSearch.file_id.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("="))
+<input type="hidden" name="z_file_id" id="z_file_id" value="=">
+</span>
+        </label>
+        <div class="@(exportLogsSearch.RightColumnClass)">
+            <div @Html.Raw(exportLogsSearch.file_id.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_export_logs_file_id" class="ew-search-field ew-search-field-single">
+<input type="@(exportLogsSearch.file_id.InputTextType)" name="x_file_id" id="x_file_id" data-table="export_logs" data-field="x_file_id" value="@Html.Raw(exportLogsSearch.file_id.EditValue)" size="38" maxlength="38" placeholder="@Html.Raw(HtmlEncode(exportLogsSearch.file_id.PlaceHolder))" data-format-pattern="@(exportLogsSearch.file_id.FormatPattern)"@Html.Raw(exportLogsSearch.file_id.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(exportLogsSearch.file_id.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* exportLogsSearch.file_id.Visible (end) *@
+@if (exportLogsSearch.created_at.Visible) { // exportLogsSearch.created_at.Visible (begin)
+    <div id="r_created_at" class="row" @Html.Raw(exportLogsSearch.created_at.RowAttributes)>
+        <label for="x_created_at" class="@(exportLogsSearch.LeftColumnClass)"><span id="elh_export_logs_created_at">@Html.Raw(exportLogsSearch.created_at.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("="))
+<input type="hidden" name="z_created_at" id="z_created_at" value="=">
+</span>
+        </label>
+        <div class="@(exportLogsSearch.RightColumnClass)">
+            <div @Html.Raw(exportLogsSearch.created_at.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_export_logs_created_at" class="ew-search-field ew-search-field-single">
+<input type="@(exportLogsSearch.created_at.InputTextType)" name="x_created_at" id="x_created_at" data-table="export_logs" data-field="x_created_at" value="@Html.Raw(exportLogsSearch.created_at.EditValue)" placeholder="@Html.Raw(HtmlEncode(exportLogsSearch.created_at.PlaceHolder))" data-format-pattern="@(exportLogsSearch.created_at.FormatPattern)"@Html.Raw(exportLogsSearch.created_at.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(exportLogsSearch.created_at.GetErrorMessage(false))</div>
+@if (!exportLogsSearch.created_at.ReadOnly && !exportLogsSearch.created_at.Disabled && !exportLogsSearch.created_at.EditAttrs.Is("readonly") && !exportLogsSearch.created_at.EditAttrs.Is("disabled")) {
+<script>
+loadjs.ready(["fexport_logssearch", "datetimepicker"], function () {
+    let format = "@Html.Raw(DateFormat(11))", // DN
+        options = {
+                localization: {
+                    locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                    hourCycle: format.match(/H/) ? "h24" : "h12",
+                    format,
+                    ...ew.language.phrase("datetimepicker")
+                },
+                display: {
+                    icons: {
+                        previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                        next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                    },
+                    components: {
+                        hours: !!format.match(/h/i),
+                        minutes: !!format.match(/m/),
+                        seconds: !!format.match(/s/i)
+                    },
+                    theme: ew.isDark() ? "dark" : "auto"
+                }
+            };
+    ew.createDateTimePicker("fexport_logssearch", "x_created_at", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+});
+</script>
+}
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* exportLogsSearch.created_at.Visible (end) *@
+@if (exportLogsSearch._username.Visible) { // exportLogsSearch._username.Visible (begin)
+    <div id="r__username" class="row" @Html.Raw(exportLogsSearch._username.RowAttributes)>
+        <label for="x__username" class="@(exportLogsSearch.LeftColumnClass)"><span id="elh_export_logs__username">@Html.Raw(exportLogsSearch._username.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z__username" id="z__username" value="LIKE">
+</span>
+        </label>
+        <div class="@(exportLogsSearch.RightColumnClass)">
+            <div @Html.Raw(exportLogsSearch._username.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_export_logs__username" class="ew-search-field ew-search-field-single">
+<input type="@(exportLogsSearch._username.InputTextType)" name="x__username" id="x__username" data-table="export_logs" data-field="x__username" value="@Html.Raw(exportLogsSearch._username.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(exportLogsSearch._username.PlaceHolder))" data-format-pattern="@(exportLogsSearch._username.FormatPattern)"@Html.Raw(exportLogsSearch._username.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(exportLogsSearch._username.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* exportLogsSearch._username.Visible (end) *@
+@if (exportLogsSearch.export_type.Visible) { // exportLogsSearch.export_type.Visible (begin)
+    <div id="r_export_type" class="row" @Html.Raw(exportLogsSearch.export_type.RowAttributes)>
+        <label for="x_export_type" class="@(exportLogsSearch.LeftColumnClass)"><span id="elh_export_logs_export_type">@Html.Raw(exportLogsSearch.export_type.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_export_type" id="z_export_type" value="LIKE">
+</span>
+        </label>
+        <div class="@(exportLogsSearch.RightColumnClass)">
+            <div @Html.Raw(exportLogsSearch.export_type.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_export_logs_export_type" class="ew-search-field ew-search-field-single">
+<input type="@(exportLogsSearch.export_type.InputTextType)" name="x_export_type" id="x_export_type" data-table="export_logs" data-field="x_export_type" value="@Html.Raw(exportLogsSearch.export_type.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(exportLogsSearch.export_type.PlaceHolder))" data-format-pattern="@(exportLogsSearch.export_type.FormatPattern)"@Html.Raw(exportLogsSearch.export_type.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(exportLogsSearch.export_type.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* exportLogsSearch.export_type.Visible (end) *@
+@if (exportLogsSearch.entity.Visible) { // exportLogsSearch.entity.Visible (begin)
+    <div id="r_entity" class="row" @Html.Raw(exportLogsSearch.entity.RowAttributes)>
+        <label for="x_entity" class="@(exportLogsSearch.LeftColumnClass)"><span id="elh_export_logs_entity">@Html.Raw(exportLogsSearch.entity.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_entity" id="z_entity" value="LIKE">
+</span>
+        </label>
+        <div class="@(exportLogsSearch.RightColumnClass)">
+            <div @Html.Raw(exportLogsSearch.entity.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_export_logs_entity" class="ew-search-field ew-search-field-single">
+<input type="@(exportLogsSearch.entity.InputTextType)" name="x_entity" id="x_entity" data-table="export_logs" data-field="x_entity" value="@Html.Raw(exportLogsSearch.entity.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(exportLogsSearch.entity.PlaceHolder))" data-format-pattern="@(exportLogsSearch.entity.FormatPattern)"@Html.Raw(exportLogsSearch.entity.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(exportLogsSearch.entity.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* exportLogsSearch.entity.Visible (end) *@
+@if (exportLogsSearch.key_value.Visible) { // exportLogsSearch.key_value.Visible (begin)
+    <div id="r_key_value" class="row" @Html.Raw(exportLogsSearch.key_value.RowAttributes)>
+        <label for="x_key_value" class="@(exportLogsSearch.LeftColumnClass)"><span id="elh_export_logs_key_value">@Html.Raw(exportLogsSearch.key_value.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_key_value" id="z_key_value" value="LIKE">
+</span>
+        </label>
+        <div class="@(exportLogsSearch.RightColumnClass)">
+            <div @Html.Raw(exportLogsSearch.key_value.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_export_logs_key_value" class="ew-search-field ew-search-field-single">
+<input type="@(exportLogsSearch.key_value.InputTextType)" name="x_key_value" id="x_key_value" data-table="export_logs" data-field="x_key_value" value="@Html.Raw(exportLogsSearch.key_value.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(exportLogsSearch.key_value.PlaceHolder))" data-format-pattern="@(exportLogsSearch.key_value.FormatPattern)"@Html.Raw(exportLogsSearch.key_value.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(exportLogsSearch.key_value.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* exportLogsSearch.key_value.Visible (end) *@
+@if (exportLogsSearch.filename.Visible) { // exportLogsSearch.filename.Visible (begin)
+    <div id="r_filename" class="row" @Html.Raw(exportLogsSearch.filename.RowAttributes)>
+        <label for="x_filename" class="@(exportLogsSearch.LeftColumnClass)"><span id="elh_export_logs_filename">@Html.Raw(exportLogsSearch.filename.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_filename" id="z_filename" value="LIKE">
+</span>
+        </label>
+        <div class="@(exportLogsSearch.RightColumnClass)">
+            <div @Html.Raw(exportLogsSearch.filename.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_export_logs_filename" class="ew-search-field ew-search-field-single">
+<input type="@(exportLogsSearch.filename.InputTextType)" name="x_filename" id="x_filename" data-table="export_logs" data-field="x_filename" value="@Html.Raw(exportLogsSearch.filename.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(exportLogsSearch.filename.PlaceHolder))" data-format-pattern="@(exportLogsSearch.filename.FormatPattern)"@Html.Raw(exportLogsSearch.filename.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(exportLogsSearch.filename.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* exportLogsSearch.filename.Visible (end) *@
+@if (exportLogsSearch._request.Visible) { // exportLogsSearch._request.Visible (begin)
+    <div id="r__request" class="row" @Html.Raw(exportLogsSearch._request.RowAttributes)>
+        <label for="x__request" class="@(exportLogsSearch.LeftColumnClass)"><span id="elh_export_logs__request">@Html.Raw(exportLogsSearch._request.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z__request" id="z__request" value="LIKE">
+</span>
+        </label>
+        <div class="@(exportLogsSearch.RightColumnClass)">
+            <div @Html.Raw(exportLogsSearch._request.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_export_logs__request" class="ew-search-field ew-search-field-single">
+<input type="@(exportLogsSearch._request.InputTextType)" name="x__request" id="x__request" data-table="export_logs" data-field="x__request" value="@Html.Raw(exportLogsSearch._request.EditValue)" size="35" placeholder="@Html.Raw(HtmlEncode(exportLogsSearch._request.PlaceHolder))" data-format-pattern="@(exportLogsSearch._request.FormatPattern)"@Html.Raw(exportLogsSearch._request.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(exportLogsSearch._request.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* exportLogsSearch._request.Visible (end) *@
+</div><!-- /page* -->
+@Html.Raw(exportLogsSearch.IsModal ? Html.Raw("<template class=\"ew-modal-buttons\">") : Html.Raw("<div class=\"row ew-buttons\">"))<!-- buttons .row -->
+    <div class="@(exportLogsSearch.OffsetColumnClass)"><!-- buttons offset -->
+        <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fexport_logssearch">@Html.Raw(Language.Phrase("Search"))</button>
+@if (exportLogsSearch.IsModal) {
+        <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fexport_logssearch">@Html.Raw(Language.Phrase("Cancel"))</button>
+} else {
+        <button class="btn btn-default ew-btn" name="btn-reset" id="btn-reset" type="button" form="fexport_logssearch" data-ew-action="reload">@Html.Raw(Language.Phrase("Reset"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(exportLogsSearch.IsModal ? Html.Raw("</template>") : Html.Raw("</div>"))<!-- /buttons .row -->
+</form>
+@exportLogsSearch.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("export_logs");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

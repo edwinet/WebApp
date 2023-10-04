@@ -1,0 +1,185 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (restaurantsView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!restaurantsView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!restaurantsView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!restaurantsView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @restaurantsView.ExportOptions.RenderBody()
+    @restaurantsView.OtherOptions.RenderBody()
+</div>
+}
+@restaurantsView.ShowPageHeader()
+@restaurantsView.ShowMessages()
+<main class="view">
+@if (!restaurantsView.IsModal) {
+if (!restaurantsView.IsExport()) {
+@restaurantsView.Pager.Render()
+}
+}
+<form name="frestaurantsview" id="frestaurantsview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!restaurantsView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(restaurantsView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { restaurants: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var frestaurantsview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("frestaurantsview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(restaurantsView.IsModal)">
+<table class="@(restaurantsView.TableClass)">
+@if (restaurantsView.id.Visible) { // restaurantsView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(restaurantsView.id.RowAttributes)>
+        <td class="@(restaurantsView.TableLeftColumnClass)"><span id="elh_restaurants_id">@Html.Raw(restaurantsView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(restaurantsView.id.CellAttributes)>
+<span id="el_restaurants_id">
+<span @Html.Raw(restaurantsView.id.ViewAttributes)>
+@Html.Raw(restaurantsView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* restaurantsView.id.Visible (end) *@
+@if (restaurantsView._name.Visible) { // restaurantsView._name.Visible (begin)
+    <tr id="r__name" @Html.Raw(restaurantsView._name.RowAttributes)>
+        <td class="@(restaurantsView.TableLeftColumnClass)"><span id="elh_restaurants__name">@Html.Raw(restaurantsView._name.Caption)</span></td>
+        <td data-name="_name" @Html.Raw(restaurantsView._name.CellAttributes)>
+<span id="el_restaurants__name">
+<span @Html.Raw(restaurantsView._name.ViewAttributes)>
+@Html.Raw(restaurantsView._name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* restaurantsView._name.Visible (end) *@
+@if (restaurantsView.description.Visible) { // restaurantsView.description.Visible (begin)
+    <tr id="r_description" @Html.Raw(restaurantsView.description.RowAttributes)>
+        <td class="@(restaurantsView.TableLeftColumnClass)"><span id="elh_restaurants_description">@Html.Raw(restaurantsView.description.Caption)</span></td>
+        <td data-name="description" @Html.Raw(restaurantsView.description.CellAttributes)>
+<span id="el_restaurants_description">
+<span @Html.Raw(restaurantsView.description.ViewAttributes)>
+@Html.Raw(restaurantsView.description.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* restaurantsView.description.Visible (end) *@
+@if (restaurantsView.image.Visible) { // restaurantsView.image.Visible (begin)
+    <tr id="r_image" @Html.Raw(restaurantsView.image.RowAttributes)>
+        <td class="@(restaurantsView.TableLeftColumnClass)"><span id="elh_restaurants_image">@Html.Raw(restaurantsView.image.Caption)</span></td>
+        <td data-name="image" @Html.Raw(restaurantsView.image.CellAttributes)>
+<span id="el_restaurants_image">
+<span>
+@Html.Raw(await GetFileViewTag((DbField)restaurantsView.image, ConvertToString(restaurantsView.image.GetViewValue()), false))
+</span>
+</span></td>
+    </tr>
+} @* restaurantsView.image.Visible (end) *@
+@if (restaurantsView.created_at.Visible) { // restaurantsView.created_at.Visible (begin)
+    <tr id="r_created_at" @Html.Raw(restaurantsView.created_at.RowAttributes)>
+        <td class="@(restaurantsView.TableLeftColumnClass)"><span id="elh_restaurants_created_at">@Html.Raw(restaurantsView.created_at.Caption)</span></td>
+        <td data-name="created_at" @Html.Raw(restaurantsView.created_at.CellAttributes)>
+<span id="el_restaurants_created_at">
+<span @Html.Raw(restaurantsView.created_at.ViewAttributes)>
+@Html.Raw(restaurantsView.created_at.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* restaurantsView.created_at.Visible (end) *@
+@if (restaurantsView.updated_at.Visible) { // restaurantsView.updated_at.Visible (begin)
+    <tr id="r_updated_at" @Html.Raw(restaurantsView.updated_at.RowAttributes)>
+        <td class="@(restaurantsView.TableLeftColumnClass)"><span id="elh_restaurants_updated_at">@Html.Raw(restaurantsView.updated_at.Caption)</span></td>
+        <td data-name="updated_at" @Html.Raw(restaurantsView.updated_at.CellAttributes)>
+<span id="el_restaurants_updated_at">
+<span @Html.Raw(restaurantsView.updated_at.ViewAttributes)>
+@Html.Raw(restaurantsView.updated_at.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* restaurantsView.updated_at.Visible (end) *@
+@if (restaurantsView.created_by.Visible) { // restaurantsView.created_by.Visible (begin)
+    <tr id="r_created_by" @Html.Raw(restaurantsView.created_by.RowAttributes)>
+        <td class="@(restaurantsView.TableLeftColumnClass)"><span id="elh_restaurants_created_by">@Html.Raw(restaurantsView.created_by.Caption)</span></td>
+        <td data-name="created_by" @Html.Raw(restaurantsView.created_by.CellAttributes)>
+<span id="el_restaurants_created_by">
+<span @Html.Raw(restaurantsView.created_by.ViewAttributes)>
+@Html.Raw(restaurantsView.created_by.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* restaurantsView.created_by.Visible (end) *@
+@if (restaurantsView.updated_by.Visible) { // restaurantsView.updated_by.Visible (begin)
+    <tr id="r_updated_by" @Html.Raw(restaurantsView.updated_by.RowAttributes)>
+        <td class="@(restaurantsView.TableLeftColumnClass)"><span id="elh_restaurants_updated_by">@Html.Raw(restaurantsView.updated_by.Caption)</span></td>
+        <td data-name="updated_by" @Html.Raw(restaurantsView.updated_by.CellAttributes)>
+<span id="el_restaurants_updated_by">
+<span @Html.Raw(restaurantsView.updated_by.ViewAttributes)>
+@Html.Raw(restaurantsView.updated_by.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* restaurantsView.updated_by.Visible (end) *@
+</table>
+@{ restaurantsView.CloseRecordset(); }
+@if (restaurantsView.CurrentDetailTables.Contains("dishes") && dishes.DetailView) {
+    if (!Empty(restaurantsView.CurrentDetailTable)) {
+<h4 class="ew-detail-caption">@Html.Raw(Language.TablePhrase("dishes", "TblCaption"))</h4>
+    }
+        @await Html.PartialAsync("dishesgrid")
+    View = this;
+}
+</form>
+@if (!restaurantsView.IsModal) {
+if (!restaurantsView.IsExport()) {
+<div><!-- DN -->
+@restaurantsView.Pager.Render()
+</div>
+}
+}
+</main>
+@restaurantsView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!restaurantsView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

@@ -1,0 +1,175 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (rolesEdit.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!rolesEdit.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@rolesEdit.ShowPageHeader()
+@rolesEdit.ShowMessages()
+<main class="edit">
+@if (!rolesEdit.IsModal) {
+@rolesEdit.Pager.Render()
+}
+<form name="frolesedit" id="frolesedit" class="@(rolesEdit.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+<script>
+var currentTable = @Html.Raw(ConvertToJson(rolesEdit.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { roles: currentTable } });
+var currentPageID = ew.PAGE_ID = "edit";
+var currentForm;
+var frolesedit;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("frolesedit")
+        .setPageId("edit")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.userLevelId, ew.Validators.integer], fields.id.isInvalid],
+            ["role_name", [fields.role_name.visible && fields.role_name.required ? ew.Validators.required(fields.role_name.caption) : null, ew.Validators.userLevelName('id')], fields.role_name.isInvalid],
+            ["description", [fields.description.visible && fields.description.required ? ew.Validators.required(fields.description.caption) : null], fields.description.isInvalid],
+            ["_type", [fields._type.visible && fields._type.required ? ew.Validators.required(fields._type.caption) : null], fields._type.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@ConvertToInt(rolesEdit.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(rolesEdit.OldKeyName)" value="@Html.Raw(rolesEdit.OldKey)">
+<div class="ew-edit-div"><!-- page* -->
+@if (rolesEdit.id.Visible) { // rolesEdit.id.Visible (begin)
+    <div id="r_id" @Html.Raw(rolesEdit.id.RowAttributes)>
+        <label id="elh_roles_id" for="x_id" class="@(rolesEdit.LeftColumnClass)">@Html.Raw(rolesEdit.id.Caption)@Html.Raw(rolesEdit.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(rolesEdit.RightColumnClass)"><div @Html.Raw(rolesEdit.id.CellAttributes)>
+<span id="el_roles_id">
+<input type="@(rolesEdit.id.InputTextType)" name="x_id" id="x_id" data-table="roles" data-field="x_id" value="@Html.Raw(rolesEdit.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(rolesEdit.id.PlaceHolder))" data-format-pattern="@(rolesEdit.id.FormatPattern)"@Html.Raw(rolesEdit.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(rolesEdit.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(rolesEdit.id.GetErrorMessage())</div>
+<input type="hidden" data-table="roles" data-field="x_id" data-hidden="1" data-old name="o_id" id="o_id" value="@Html.Raw(HtmlEncode(rolesEdit.id.OldValue ?? rolesEdit.id.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* rolesEdit.id.Visible (end) *@
+@if (rolesEdit.role_name.Visible) { // rolesEdit.role_name.Visible (begin)
+    <div id="r_role_name" @Html.Raw(rolesEdit.role_name.RowAttributes)>
+        <label id="elh_roles_role_name" for="x_role_name" class="@(rolesEdit.LeftColumnClass)">@Html.Raw(rolesEdit.role_name.Caption)@Html.Raw(rolesEdit.role_name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(rolesEdit.RightColumnClass)"><div @Html.Raw(rolesEdit.role_name.CellAttributes)>
+<span id="el_roles_role_name">
+<input type="@(rolesEdit.role_name.InputTextType)" name="x_role_name" id="x_role_name" data-table="roles" data-field="x_role_name" value="@Html.Raw(rolesEdit.role_name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(rolesEdit.role_name.PlaceHolder))" data-format-pattern="@(rolesEdit.role_name.FormatPattern)"@Html.Raw(rolesEdit.role_name.EditAttributes) aria-describedby="x_role_name_help">
+@Html.Raw(rolesEdit.role_name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(rolesEdit.role_name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* rolesEdit.role_name.Visible (end) *@
+@if (rolesEdit.description.Visible) { // rolesEdit.description.Visible (begin)
+    <div id="r_description" @Html.Raw(rolesEdit.description.RowAttributes)>
+        <label id="elh_roles_description" for="x_description" class="@(rolesEdit.LeftColumnClass)">@Html.Raw(rolesEdit.description.Caption)@Html.Raw(rolesEdit.description.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(rolesEdit.RightColumnClass)"><div @Html.Raw(rolesEdit.description.CellAttributes)>
+<span id="el_roles_description">
+<input type="@(rolesEdit.description.InputTextType)" name="x_description" id="x_description" data-table="roles" data-field="x_description" value="@Html.Raw(rolesEdit.description.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(rolesEdit.description.PlaceHolder))" data-format-pattern="@(rolesEdit.description.FormatPattern)"@Html.Raw(rolesEdit.description.EditAttributes) aria-describedby="x_description_help">
+@Html.Raw(rolesEdit.description.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(rolesEdit.description.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* rolesEdit.description.Visible (end) *@
+@if (rolesEdit._type.Visible) { // rolesEdit._type.Visible (begin)
+    <div id="r__type" @Html.Raw(rolesEdit._type.RowAttributes)>
+        <label id="elh_roles__type" for="x__type" class="@(rolesEdit.LeftColumnClass)">@Html.Raw(rolesEdit._type.Caption)@Html.Raw(rolesEdit._type.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(rolesEdit.RightColumnClass)"><div @Html.Raw(rolesEdit._type.CellAttributes)>
+<span id="el_roles__type">
+<input type="@(rolesEdit._type.InputTextType)" name="x__type" id="x__type" data-table="roles" data-field="x__type" value="@Html.Raw(rolesEdit._type.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(rolesEdit._type.PlaceHolder))" data-format-pattern="@(rolesEdit._type.FormatPattern)"@Html.Raw(rolesEdit._type.EditAttributes) aria-describedby="x__type_help">
+@Html.Raw(rolesEdit._type.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(rolesEdit._type.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* rolesEdit._type.Visible (end) *@
+</div><!-- /page* -->
+@{ rolesEdit.CloseRecordset(); }
+@Html.Raw(rolesEdit.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(rolesEdit.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="frolesedit">@Html.Raw(Language.Phrase("SaveBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="frolesedit" data-href="@AppPath(rolesEdit.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(rolesEdit.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@if (!rolesEdit.IsModal) {
+<div><!-- DN -->
+@rolesEdit.Pager.Render()
+</div>
+}
+</main>
+@rolesEdit.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("roles");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

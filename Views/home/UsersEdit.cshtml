@@ -1,0 +1,319 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (usersEdit.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!usersEdit.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@usersEdit.ShowPageHeader()
+@usersEdit.ShowMessages()
+<main class="edit">
+@if (!usersEdit.IsModal) {
+@usersEdit.Pager.Render()
+}
+<form name="fusersedit" id="fusersedit" class="@(usersEdit.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+<script>
+var currentTable = @Html.Raw(ConvertToJson(usersEdit.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { users: currentTable } });
+var currentPageID = ew.PAGE_ID = "edit";
+var currentForm;
+var fusersedit;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fusersedit")
+        .setPageId("edit")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null], fields.id.isInvalid],
+            ["first_name", [fields.first_name.visible && fields.first_name.required ? ew.Validators.required(fields.first_name.caption) : null], fields.first_name.isInvalid],
+            ["last_name", [fields.last_name.visible && fields.last_name.required ? ew.Validators.required(fields.last_name.caption) : null], fields.last_name.isInvalid],
+            ["_email", [fields._email.visible && fields._email.required ? ew.Validators.required(fields._email.caption) : null, ew.Validators.email], fields._email.isInvalid],
+            ["_username", [fields._username.visible && fields._username.required ? ew.Validators.required(fields._username.caption) : null], fields._username.isInvalid],
+            ["password", [fields.password.visible && fields.password.required ? ew.Validators.required(fields.password.caption) : null, ew.Validators.passwordStrength], fields.password.isInvalid],
+            ["mobile", [fields.mobile.visible && fields.mobile.required ? ew.Validators.required(fields.mobile.caption) : null, ew.Validators.phone], fields.mobile.isInvalid],
+            ["photo", [fields.photo.visible && fields.photo.required ? ew.Validators.fileRequired(fields.photo.caption) : null], fields.photo.isInvalid],
+            ["role_id", [fields.role_id.visible && fields.role_id.required ? ew.Validators.required(fields.role_id.caption) : null], fields.role_id.isInvalid],
+            ["provider", [fields.provider.visible && fields.provider.required ? ew.Validators.required(fields.provider.caption) : null], fields.provider.isInvalid],
+            ["activated", [fields.activated.visible && fields.activated.required ? ew.Validators.required(fields.activated.caption) : null], fields.activated.isInvalid],
+            ["_profile", [fields._profile.visible && fields._profile.required ? ew.Validators.required(fields._profile.caption) : null], fields._profile.isInvalid],
+            ["created_at", [fields.created_at.visible && fields.created_at.required ? ew.Validators.required(fields.created_at.caption) : null], fields.created_at.isInvalid],
+            ["updated_at", [fields.updated_at.visible && fields.updated_at.required ? ew.Validators.required(fields.updated_at.caption) : null], fields.updated_at.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+            "role_id": @Html.Raw(usersEdit.role_id.ToClientList(usersEdit)),
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@ConvertToInt(usersEdit.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(usersEdit.OldKeyName)" value="@Html.Raw(usersEdit.OldKey)">
+<div class="ew-edit-div"><!-- page* -->
+@if (usersEdit.id.Visible) { // usersEdit.id.Visible (begin)
+    <div id="r_id" @Html.Raw(usersEdit.id.RowAttributes)>
+        <label id="elh_users_id" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit.id.Caption)@Html.Raw(usersEdit.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit.id.CellAttributes)>
+<span id="el_users_id">
+<span @Html.Raw(usersEdit.id.ViewAttributes)>
+<input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(usersEdit.id.EditValue)))"></span>
+<input type="hidden" data-table="users" data-field="x_id" data-hidden="1" name="x_id" id="x_id" value="@Html.Raw(HtmlEncode(usersEdit.id.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* usersEdit.id.Visible (end) *@
+@if (usersEdit.first_name.Visible) { // usersEdit.first_name.Visible (begin)
+    <div id="r_first_name" @Html.Raw(usersEdit.first_name.RowAttributes)>
+        <label id="elh_users_first_name" for="x_first_name" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit.first_name.Caption)@Html.Raw(usersEdit.first_name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit.first_name.CellAttributes)>
+<span id="el_users_first_name">
+<input type="@(usersEdit.first_name.InputTextType)" name="x_first_name" id="x_first_name" data-table="users" data-field="x_first_name" value="@Html.Raw(usersEdit.first_name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersEdit.first_name.PlaceHolder))" data-format-pattern="@(usersEdit.first_name.FormatPattern)"@Html.Raw(usersEdit.first_name.EditAttributes) aria-describedby="x_first_name_help">
+@Html.Raw(usersEdit.first_name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(usersEdit.first_name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* usersEdit.first_name.Visible (end) *@
+@if (usersEdit.last_name.Visible) { // usersEdit.last_name.Visible (begin)
+    <div id="r_last_name" @Html.Raw(usersEdit.last_name.RowAttributes)>
+        <label id="elh_users_last_name" for="x_last_name" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit.last_name.Caption)@Html.Raw(usersEdit.last_name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit.last_name.CellAttributes)>
+<span id="el_users_last_name">
+<input type="@(usersEdit.last_name.InputTextType)" name="x_last_name" id="x_last_name" data-table="users" data-field="x_last_name" value="@Html.Raw(usersEdit.last_name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersEdit.last_name.PlaceHolder))" data-format-pattern="@(usersEdit.last_name.FormatPattern)"@Html.Raw(usersEdit.last_name.EditAttributes) aria-describedby="x_last_name_help">
+@Html.Raw(usersEdit.last_name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(usersEdit.last_name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* usersEdit.last_name.Visible (end) *@
+@if (usersEdit._email.Visible) { // usersEdit._email.Visible (begin)
+    <div id="r__email" @Html.Raw(usersEdit._email.RowAttributes)>
+        <label id="elh_users__email" for="x__email" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit._email.Caption)@Html.Raw(usersEdit._email.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit._email.CellAttributes)>
+<span id="el_users__email">
+<input type="@(usersEdit._email.InputTextType)" name="x__email" id="x__email" data-table="users" data-field="x__email" value="@Html.Raw(usersEdit._email.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersEdit._email.PlaceHolder))" data-format-pattern="@(usersEdit._email.FormatPattern)"@Html.Raw(usersEdit._email.EditAttributes) aria-describedby="x__email_help">
+@Html.Raw(usersEdit._email.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(usersEdit._email.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* usersEdit._email.Visible (end) *@
+@if (usersEdit._username.Visible) { // usersEdit._username.Visible (begin)
+    <div id="r__username" @Html.Raw(usersEdit._username.RowAttributes)>
+        <label id="elh_users__username" for="x__username" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit._username.Caption)@Html.Raw(usersEdit._username.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit._username.CellAttributes)>
+<span id="el_users__username">
+<input type="@(usersEdit._username.InputTextType)" name="x__username" id="x__username" data-table="users" data-field="x__username" value="@Html.Raw(usersEdit._username.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersEdit._username.PlaceHolder))" data-format-pattern="@(usersEdit._username.FormatPattern)"@Html.Raw(usersEdit._username.EditAttributes) aria-describedby="x__username_help">
+@Html.Raw(usersEdit._username.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(usersEdit._username.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* usersEdit._username.Visible (end) *@
+@if (usersEdit.password.Visible) { // usersEdit.password.Visible (begin)
+    <div id="r_password" @Html.Raw(usersEdit.password.RowAttributes)>
+        <label id="elh_users_password" for="x_password" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit.password.Caption)@Html.Raw(usersEdit.password.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit.password.CellAttributes)>
+<span id="el_users_password">
+<div class="input-group" id="ig_password">
+    <input type="password" autocomplete="new-password" data-password-strength="pst_password" data-table="users" data-field="x_password" name="x_password" id="x_password" value="@(usersEdit.password.EditValue)" size="30" maxlength="255" placeholder="@(HtmlEncode(usersEdit.password.PlaceHolder))" @Html.Raw(usersEdit.password.EditAttributes) aria-describedby="x_password_help">
+    <button type="button" class="btn btn-default ew-toggle-password rounded-end" data-ew-action="password"><i class="fa-solid fa-eye"></i></button>
+</div>
+<div class="progress ew-password-strength-bar form-text mt-1 d-none" id="pst_password">
+    <div class="progress-bar" role="progressbar"></div>
+</div>
+@Html.Raw(usersEdit.password.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(usersEdit.password.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* usersEdit.password.Visible (end) *@
+@if (usersEdit.mobile.Visible) { // usersEdit.mobile.Visible (begin)
+    <div id="r_mobile" @Html.Raw(usersEdit.mobile.RowAttributes)>
+        <label id="elh_users_mobile" for="x_mobile" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit.mobile.Caption)@Html.Raw(usersEdit.mobile.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit.mobile.CellAttributes)>
+<span id="el_users_mobile">
+<input type="@(usersEdit.mobile.InputTextType)" name="x_mobile" id="x_mobile" data-table="users" data-field="x_mobile" value="@Html.Raw(usersEdit.mobile.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersEdit.mobile.PlaceHolder))" data-format-pattern="@(usersEdit.mobile.FormatPattern)"@Html.Raw(usersEdit.mobile.EditAttributes) aria-describedby="x_mobile_help">
+@Html.Raw(usersEdit.mobile.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(usersEdit.mobile.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* usersEdit.mobile.Visible (end) *@
+@if (usersEdit.photo.Visible) { // usersEdit.photo.Visible (begin)
+    <div id="r_photo" @Html.Raw(usersEdit.photo.RowAttributes)>
+        <label id="elh_users_photo" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit.photo.Caption)@Html.Raw(usersEdit.photo.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit.photo.CellAttributes)>
+<span id="el_users_photo">
+<div id="fd_x_photo" class="fileinput-button ew-file-drop-zone">
+    <input
+        type="file"
+        id="x_photo"
+        name="x_photo"
+        class="form-control ew-file-input"
+        title="@(usersEdit.photo.Title)"
+        lang="@(CurrentLanguageID)"
+        data-table="users"
+        data-field="x_photo"
+        data-size="255"
+        data-accept-file-types="@(usersEdit.photo.AcceptFileTypes)"
+        data-max-file-size="@(usersEdit.photo.UploadMaxFileSize)"
+        data-max-number-of-files="null"
+        data-disable-image-crop="@(usersEdit.photo.ImageCropper ? 0 : 1)"
+        aria-describedby="x_photo_help"
+        @Html.Raw((usersEdit.photo.ReadOnly || usersEdit.photo.Disabled) ? " disabled" : "")
+        @Html.Raw(usersEdit.photo.EditAttributes)
+    >
+    <div class="text-muted ew-file-text">@Html.Raw(Language.Phrase("ChooseFile"))</div>
+</div>
+@Html.Raw(usersEdit.photo.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(usersEdit.photo.GetErrorMessage())</div>
+<input type="hidden" name="fn_x_photo" id= "fn_x_photo" value="@(usersEdit.photo.Upload.FileName)">
+<input type="hidden" name="fa_x_photo" id= "fa_x_photo" value="@(Post("fa_x_photo") == "0" ? "0" : "1")">
+<table id="ft_x_photo" class="table table-sm float-start ew-upload-table"><tbody class="files"></tbody></table>
+</span>
+</div></div>
+    </div>
+} @* usersEdit.photo.Visible (end) *@
+@if (usersEdit.role_id.Visible) { // usersEdit.role_id.Visible (begin)
+    <div id="r_role_id" @Html.Raw(usersEdit.role_id.RowAttributes)>
+        <label id="elh_users_role_id" for="x_role_id" class="@(usersEdit.LeftColumnClass)">@Html.Raw(usersEdit.role_id.Caption)@Html.Raw(usersEdit.role_id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(usersEdit.RightColumnClass)"><div @Html.Raw(usersEdit.role_id.CellAttributes)>
+@if (!Security.IsAdmin && Security.IsLoggedIn) { // Non system admin
+<span id="el_users_role_id">
+<span class="form-control-plaintext">@Html.Raw(usersEdit.role_id.DisplayValue(usersEdit.role_id.EditValue))</span>
+</span>
+} else {
+<span id="el_users_role_id">
+    <select
+        id="x_role_id"
+        name="x_role_id"
+        class="form-select ew-select@(usersEdit.role_id.IsInvalidClass)"
+        data-select2-id="fusersedit_x_role_id"
+        data-table="users"
+        data-field="x_role_id"
+        data-value-separator="@(usersEdit.role_id.DisplayValueSeparatorAttribute)"
+        data-placeholder="@(HtmlEncode(usersEdit.role_id.PlaceHolder))"
+        @Html.Raw(usersEdit.role_id.EditAttributes)>
+        @(usersEdit.role_id.SelectOptionListHtml("x_role_id"))
+    </select>
+    @Html.Raw(usersEdit.role_id.GetCustomMessage)
+    <div class="invalid-feedback">@Html.Raw(usersEdit.role_id.GetErrorMessage())</div>
+@Html.Raw(usersEdit.role_id.Lookup.GetParamTag(usersEdit, "p_x_role_id"))
+<script>
+loadjs.ready("fusersedit", function() {
+    var options = { name: "x_role_id", selectId: "fusersedit_x_role_id" },
+        el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+    if (!el)
+        return;
+    options.closeOnSelect = !options.multiple;
+    options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+    if (fusersedit.lists.role_id?.lookupOptions.length) {
+        options.data = { id: "x_role_id", form: "fusersedit" };
+    } else {
+        options.ajax = { id: "x_role_id", form: "fusersedit", limit: ew.LOOKUP_PAGE_SIZE };
+    }
+    options.minimumResultsForSearch = Infinity;
+    options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.users.fields.role_id.selectOptions);
+    ew.createSelect(options);
+});
+</script>
+</span>
+}
+</div></div>
+    </div>
+} @* usersEdit.role_id.Visible (end) *@
+</div><!-- /page* -->
+<span id="el_users_provider">
+<input type="hidden" data-table="users" data-field="x_provider" data-hidden="1" name="x_provider" id="x_provider" value="@Html.Raw(HtmlEncode(usersEdit.provider.CurrentValue))">
+</span>
+<span id="el_users_activated">
+<input type="hidden" data-table="users" data-field="x_activated" data-hidden="1" name="x_activated" id="x_activated" value="@Html.Raw(HtmlEncode(usersEdit.activated.CurrentValue))">
+</span>
+<span id="el_users__profile">
+<input type="hidden" data-table="users" data-field="x__profile" data-hidden="1" name="x__profile" id="x__profile" value="@Html.Raw(HtmlEncode(usersEdit._profile.CurrentValue))">
+</span>
+@{ usersEdit.CloseRecordset(); }
+@Html.Raw(usersEdit.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(usersEdit.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fusersedit">@Html.Raw(Language.Phrase("SaveBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fusersedit" data-href="@AppPath(usersEdit.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(usersEdit.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@if (!usersEdit.IsModal) {
+<div><!-- DN -->
+@usersEdit.Pager.Render()
+</div>
+}
+</main>
+@usersEdit.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("users");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

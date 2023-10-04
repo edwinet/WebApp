@@ -1,0 +1,1585 @@
+{
+	"info": {
+		"_postman_id": "cdb763e0-e172-4ec4-953d-9fb2fc228fc1",
+		"name": "WebApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "326550"
+	},
+	"item": [
+		{
+			"name": "autenticado",
+			"item": [
+				{
+					"name": "restaurantes",
+					"item": [
+						{
+							"name": "lista",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/list/restaurants",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"list",
+										"restaurants"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "lista",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/list/restaurants",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"list",
+												"restaurants"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 04:17:15 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"F5BA4E0B185F9C38CF518F236F332BDF\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 04:17:16 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 04:17:16 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Set-Cookie",
+											"value": ".AspNetCore.Antiforgery.jZSdvxySjl8=CfDJ8IFe1omIioZCqf9z9M0efG_AFfCBWjaYr1__JTfrA9ISDqn5WaS9Yfi4AOsZzsgrauVVqpMUOrsa-AxWqtfFh6s9QstpKJgg8ZOgIGg8geYeJockB_xEIUt_LRqIym6xqOwVK7XkfjQiv1vXDo96mSI; path=/; samesite=strict; httponly"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"restaurants\": [\n        {\n            \"id\": \"1\",\n            \"name\": \"Hecho en Casa\",\n            \"description\": \"Comida criolla y catering por encargo. \",\n            \"image\": {\n                \"type\": \"image/gif\",\n                \"url\": \"http://localhost:5000/api/file/restaurants/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVeH30kSLoOJsDp_bIRVOkpIV8sUm5330E\",\n                \"name\": \"hecho-en-casa.gif\"\n            },\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"2\",\n            \"name\": \"Restaurante Delicias de mi Cocina\",\n            \"description\": \"Buffet, Pasteles en hoja, niños envueltos, picaderas en general buffet para todas ocaciones. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/restaurants/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdU5QVGMSUG5owNRopKRWGHdLaVotYNPm_u7D3WUxaOt6A\",\n                \"name\": \"delicias-de-mi-cocina.jpg\"\n            },\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"3\",\n            \"name\": \"El Chef\",\n            \"description\": \"Buffet, comida empresarial, catering y picaderas \",\n            \"image\": {\n                \"type\": \"image/png\",\n                \"url\": \"http://localhost:5000/api/file/restaurants/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdV58GPmnBRXga2QEuGDIsn_1gSYqRKWs9o\",\n                \"name\": \"logo_chef_nuevo.png\"\n            },\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"4\",\n            \"name\": \"La Zona Chicharrón Light\",\n            \"description\": \"Calle José Reyes, No. 56 Esquina Calle Conde, Zona Colonial \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/restaurants/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdXzM7NW_jjqjl84Gdoh_i43_0hlqZjMlu8MsfYaz-Ow0qmVM1i-lDpm\",\n                \"name\": \"93b5fd796682c6d5302cd5bec164fe90.jpeg\"\n            },\n            \"created_at\": \"2023-10-03T20:30:02\"\n        }\n    ],\n    \"totalRecordCount\": 4,\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "ver",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/view/restaurants/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"view",
+										"restaurants",
+										"1"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "ver",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/view/restaurants/1",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"view",
+												"restaurants",
+												"1"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 04:21:12 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"BF24375008951CD09CF527A0CACB86A9\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 04:21:13 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 04:21:13 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"TableVar\": {\n        \"id\": \"1\",\n        \"name\": \"Hecho en Casa\",\n        \"description\": \"<p>Comida criolla y catering por encargo.</p>\\r\\n\",\n        \"image\": {\n            \"type\": \"image/gif\",\n            \"url\": \"http://localhost:5000/api/file/restaurants/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVeH30kSLoOJsDp_bIRVOkpIV8sUm5330E\",\n            \"name\": \"hecho-en-casa.gif\"\n        },\n        \"created_at\": \"2023-10-03T20:30:02\",\n        \"updated_at\": \"2023-10-03T20:30:02\",\n        \"created_by\": \"1\",\n        \"updated_by\": \"1\"\n    },\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "agregar",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "{{$randomCompanyName}}",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "{{$randomBs}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/add/restaurants",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"add",
+										"restaurants"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "agregar",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "{{$randomCompanyName}}",
+													"type": "text"
+												},
+												{
+													"key": "description",
+													"value": "{{$randomBs}}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/add/restaurants",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"add",
+												"restaurants"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 04:42:02 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"042EEFBF54BE5090FB5621BC2DABB1CA\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 04:42:02 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 04:42:02 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"restaurants\": {\n        \"name\": \"Robel - Gaylord\",\n        \"description\": \"cultivate value-added e-markets\",\n        \"id\": \"7\"\n    },\n    \"action\": \"add\",\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "editar",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "{{$randomCompanyName}}",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "{{$randomBs}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/edit/restaurants/5",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"edit",
+										"restaurants",
+										"5"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "editar",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "{{$randomCompanyName}}",
+													"type": "text"
+												},
+												{
+													"key": "description",
+													"value": "{{$randomBs}}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/edit/restaurants/7",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"edit",
+												"restaurants",
+												"7"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 04:49:26 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"B23190BF27C56C4B7AF534A7BAB245DE\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 04:49:27 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 04:49:27 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"restaurants\": {\n        \"name\": \"Spencer and Sons\",\n        \"description\": \"e-enable B2C niches\"\n    },\n    \"action\": \"edit\",\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "borrar",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/delete/restaurants/5",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"delete",
+										"restaurants",
+										"5"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "borrar",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/delete/restaurants/6",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"delete",
+												"restaurants",
+												"6"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 04:51:02 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"3CD1AD7CE5AD6BDDDE5A8509D6672DCF\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 04:51:02 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 04:51:02 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"restaurants\": {\n        \"id\": 6,\n        \"name\": \"Adams, Walker and Dooley\",\n        \"description\": \"implement one-to-one technologies\",\n        \"image\": null,\n        \"created_at\": \"2023-10-04T00:30:46.123\",\n        \"updated_at\": \"2023-10-04T00:30:46.123\",\n        \"created_by\": 0,\n        \"updated_by\": 0\n    },\n    \"action\": \"delete\",\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "platos",
+					"item": [
+						{
+							"name": "lista",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/list/dishes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"list",
+										"dishes"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "lista",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/list/dishes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"list",
+												"dishes"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 05:35:37 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"B4D32A3B38C9905BDEC047C1C698C538\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 05:35:38 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 05:35:38 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"dishes\": [\n        {\n            \"id\": \"1\",\n            \"name\": \"Combo 1 – Arroz Blanco + Hab. Rojas + Pollo Asado + Ens. Rusa o Ens. Verde + Guarnicion del Dia.\",\n            \"description\": \"Nota las guarnición y ensalada puede variar de acuerdo a disponibilidad. Es una cajita de sorpresas. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVJLlV1dS9N0UH_e0ZH7U2GKI4vrPwmjy3hd9muzLJ5rmabSfB2Xy3r\",\n                \"name\": \"4218ca1d09174218364162cd0b1a8cc1.jpeg\"\n            },\n            \"price\": \"395\",\n            \"restaurant_id\": \"3\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"2\",\n            \"name\": \"Bowl 3\",\n            \"description\": \"Arroz Frito Chino + Pechurinas al Limon, Aguacate y Platano Maduro \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVJLlV1dS9N0UH_e0ZH7U2GKI4vrPwmjy3hd9muzLJ5rui3WzDmXOle8lNuI2Y18uU\",\n                \"name\": \"4218ca1d09174218364162cd0b1a8cc1 (1).jpeg\"\n            },\n            \"price\": \"550\",\n            \"restaurant_id\": \"3\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"3\",\n            \"name\": \"Combo 6 - Sancocho + Arroz Blanco.\",\n            \"description\": \"Nota las guarnición y ensalada puede variar de acuerdo a disponibilidad. Es una cajita de sorpresas. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdU70mrBBRn9hiSCiIBKKwQ8sMuy2ypE5IS2PRazBAzYreceDkKnCAHL\",\n                \"name\": \"b4facf495c22df52f3ca635379ebe613.jpeg\"\n            },\n            \"price\": \"495\",\n            \"restaurant_id\": \"3\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"4\",\n            \"name\": \"Combo Lasagna\",\n            \"description\": \"Lasagna, Tostones o Papas Fritas, Ensalada y una Bebida. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdW5XqC29a37zTok2QHQgH1hDATxEdT3lfIgagehZs7Ba2YP17m-L6j68lNuI2Y18uU\",\n                \"name\": \"54f190e8-2a79-4966-adea-955109cc6736.jpeg\"\n            },\n            \"price\": \"550\",\n            \"restaurant_id\": \"2\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"5\",\n            \"name\": \"La Bandera\",\n            \"description\": \"Arroz, Guisante, Pollo, Ensalada. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdUCV13BvIPnNC0ltXJYzsejCrRikG_ed6-KdyO6u70XHHiHr0x7yyY7\",\n                \"name\": \"c2959e45a9c16d6decbecb22aad6f0c1.jpg\"\n            },\n            \"price\": \"300\",\n            \"restaurant_id\": \"2\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"6\",\n            \"name\": \"Combo Ejecutivo\",\n            \"description\": \"Arroz, habichuelas, carne, ensalda y maduros \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVlaRHi8z4iaNPYrv7u3MEMhd8km_TzipI\",\n                \"name\": \"platos-del-dia-6.jpeg\"\n            },\n            \"price\": \"550\",\n            \"restaurant_id\": \"2\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"7\",\n            \"name\": \"Combo 1\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdXDxnDSwf8bJJXdG6MOd0tK\",\n                \"name\": \"348s.jpg\"\n            },\n            \"price\": \"660\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"8\",\n            \"name\": \"Combo 2\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdU72GgLnbDeLT9QAPNlYo-fJhdrpGKFUWM5eHjNjkqSww\",\n                \"name\": \"66ceb-plato-dominicano.jpg\"\n            },\n            \"price\": \"220\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"9\",\n            \"name\": \"Combo 3\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdXMpDM0g9FFiqqx2Mjb7zOB05dj6e_sK6BPEKd5Wx2U6T2l4sdthoa_\",\n                \"name\": \"featured-img-of-post-158197.jpg\"\n            },\n            \"price\": \"275\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"10\",\n            \"name\": \"Combo Manjar 2\",\n            \"description\": \"Arroz, Habichuelas, Carne, Ensalada, y Extra \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVJLlV1dS9N0UH_e0ZH7U2GKI4vrPwmjy3hd9muzLJ5roTnwzgbH0r9ld0bow53S0o\",\n                \"name\": \"4218ca1d09174218364162cd0b1a8cc1(2).jpeg\"\n            },\n            \"price\": \"280\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"11\",\n            \"name\": \"Chicharron Light - 1 Libra con Batata Frita\",\n            \"description\": \" Chicharron Light 1 Libra con Batata Frita \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdWvtFr8WHsxoSxtS7nMMo79r1ilwWKrAL7uGFYH5QcElKBik9XAWdFq\",\n                \"name\": \"859baff1d76042a45e319d1de80aec7a.jpeg\"\n            },\n            \"price\": \"695\",\n            \"restaurant_id\": \"4\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"12\",\n            \"name\": \"Chicharrón Light - 1 Libra con Yuca\",\n            \"description\": \" Chicharrón Light 1 Libra con Yuca \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVbgfmHlqFBxiq3Vx7XnDzUIXBLS0kTLbH8aaqeGPiBQpXdG6MOd0tK\",\n                \"name\": \"yuca_con_chicharron_1981-reg.jpg\"\n            },\n            \"price\": \"695\",\n            \"restaurant_id\": \"4\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"13\",\n            \"name\": \"Chicharrón Light - 1 Libra con Yuca Frita\",\n            \"description\": \" Chicharrón Light 1 Libra con Yuca Frita Ensalada \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdW5iXpvZQevprG1jE7YR55t8Cocc8k_1FJYNViapGebHQ\",\n                \"name\": \"Yuca frita con chicharon.jpg\"\n            },\n            \"price\": \"750\",\n            \"restaurant_id\": \"4\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"15\",\n            \"name\": \"Handcrafted Steel Bacon\",\n            \"description\": \"Wooden\",\n            \"price\": \"94764\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-04T01:33:19\"\n        }\n    ],\n    \"totalRecordCount\": 14,\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "listaPaginada",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/list/dishes?start=1&recperpage=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"list",
+										"dishes"
+									],
+									"query": [
+										{
+											"key": "start",
+											"value": "1"
+										},
+										{
+											"key": "recperpage",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "listaPaginada",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/list/dishes?start=1&recperpage=10",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"list",
+												"dishes"
+											],
+											"query": [
+												{
+													"key": "start",
+													"value": "1"
+												},
+												{
+													"key": "recperpage",
+													"value": "10"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 05:40:11 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"D40E95B78B748787FDECF4E5E67774AB\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 05:40:11 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 05:40:11 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"dishes\": [\n        {\n            \"id\": \"1\",\n            \"name\": \"Combo 1 – Arroz Blanco + Hab. Rojas + Pollo Asado + Ens. Rusa o Ens. Verde + Guarnicion del Dia.\",\n            \"description\": \"Nota las guarnición y ensalada puede variar de acuerdo a disponibilidad. Es una cajita de sorpresas. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVJLlV1dS9N0UH_e0ZH7U2GKI4vrPwmjy3hd9muzLJ5rmabSfB2Xy3r\",\n                \"name\": \"4218ca1d09174218364162cd0b1a8cc1.jpeg\"\n            },\n            \"price\": \"395\",\n            \"restaurant_id\": \"3\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"2\",\n            \"name\": \"Bowl 3\",\n            \"description\": \"Arroz Frito Chino + Pechurinas al Limon, Aguacate y Platano Maduro \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVJLlV1dS9N0UH_e0ZH7U2GKI4vrPwmjy3hd9muzLJ5rui3WzDmXOle8lNuI2Y18uU\",\n                \"name\": \"4218ca1d09174218364162cd0b1a8cc1 (1).jpeg\"\n            },\n            \"price\": \"550\",\n            \"restaurant_id\": \"3\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"3\",\n            \"name\": \"Combo 6 - Sancocho + Arroz Blanco.\",\n            \"description\": \"Nota las guarnición y ensalada puede variar de acuerdo a disponibilidad. Es una cajita de sorpresas. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdU70mrBBRn9hiSCiIBKKwQ8sMuy2ypE5IS2PRazBAzYreceDkKnCAHL\",\n                \"name\": \"b4facf495c22df52f3ca635379ebe613.jpeg\"\n            },\n            \"price\": \"495\",\n            \"restaurant_id\": \"3\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"4\",\n            \"name\": \"Combo Lasagna\",\n            \"description\": \"Lasagna, Tostones o Papas Fritas, Ensalada y una Bebida. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdW5XqC29a37zTok2QHQgH1hDATxEdT3lfIgagehZs7Ba2YP17m-L6j68lNuI2Y18uU\",\n                \"name\": \"54f190e8-2a79-4966-adea-955109cc6736.jpeg\"\n            },\n            \"price\": \"550\",\n            \"restaurant_id\": \"2\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"5\",\n            \"name\": \"La Bandera\",\n            \"description\": \"Arroz, Guisante, Pollo, Ensalada. \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdUCV13BvIPnNC0ltXJYzsejCrRikG_ed6-KdyO6u70XHHiHr0x7yyY7\",\n                \"name\": \"c2959e45a9c16d6decbecb22aad6f0c1.jpg\"\n            },\n            \"price\": \"300\",\n            \"restaurant_id\": \"2\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"6\",\n            \"name\": \"Combo Ejecutivo\",\n            \"description\": \"Arroz, habichuelas, carne, ensalda y maduros \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVlaRHi8z4iaNPYrv7u3MEMhd8km_TzipI\",\n                \"name\": \"platos-del-dia-6.jpeg\"\n            },\n            \"price\": \"550\",\n            \"restaurant_id\": \"2\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"7\",\n            \"name\": \"Combo 1\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdXDxnDSwf8bJJXdG6MOd0tK\",\n                \"name\": \"348s.jpg\"\n            },\n            \"price\": \"660\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"8\",\n            \"name\": \"Combo 2\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdU72GgLnbDeLT9QAPNlYo-fJhdrpGKFUWM5eHjNjkqSww\",\n                \"name\": \"66ceb-plato-dominicano.jpg\"\n            },\n            \"price\": \"220\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"9\",\n            \"name\": \"Combo 3\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdXMpDM0g9FFiqqx2Mjb7zOB05dj6e_sK6BPEKd5Wx2U6T2l4sdthoa_\",\n                \"name\": \"featured-img-of-post-158197.jpg\"\n            },\n            \"price\": \"275\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"10\",\n            \"name\": \"Combo Manjar 2\",\n            \"description\": \"Arroz, Habichuelas, Carne, Ensalada, y Extra \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVJLlV1dS9N0UH_e0ZH7U2GKI4vrPwmjy3hd9muzLJ5roTnwzgbH0r9ld0bow53S0o\",\n                \"name\": \"4218ca1d09174218364162cd0b1a8cc1(2).jpeg\"\n            },\n            \"price\": \"280\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        }\n    ],\n    \"totalRecordCount\": 14,\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "listaPorRestaurante",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/list/dishes?restaurant_id=1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"list",
+										"dishes"
+									],
+									"query": [
+										{
+											"key": "restaurant_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "listaPorRestaurante",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/list/dishes?restaurant_id=1",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"list",
+												"dishes"
+											],
+											"query": [
+												{
+													"key": "restaurant_id",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 05:41:52 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"A6E3A7E704436A27D5098177D632C9D8\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 05:41:53 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 05:41:53 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"dishes\": [\n        {\n            \"id\": \"7\",\n            \"name\": \"Combo 1\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdXDxnDSwf8bJJXdG6MOd0tK\",\n                \"name\": \"348s.jpg\"\n            },\n            \"price\": \"660\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"8\",\n            \"name\": \"Combo 2\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdU72GgLnbDeLT9QAPNlYo-fJhdrpGKFUWM5eHjNjkqSww\",\n                \"name\": \"66ceb-plato-dominicano.jpg\"\n            },\n            \"price\": \"220\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"9\",\n            \"name\": \"Combo 3\",\n            \"description\": \"Plato del dia \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdXMpDM0g9FFiqqx2Mjb7zOB05dj6e_sK6BPEKd5Wx2U6T2l4sdthoa_\",\n                \"name\": \"featured-img-of-post-158197.jpg\"\n            },\n            \"price\": \"275\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"10\",\n            \"name\": \"Combo Manjar 2\",\n            \"description\": \"Arroz, Habichuelas, Carne, Ensalada, y Extra \",\n            \"image\": {\n                \"type\": \"image/jpeg\",\n                \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVJLlV1dS9N0UH_e0ZH7U2GKI4vrPwmjy3hd9muzLJ5roTnwzgbH0r9ld0bow53S0o\",\n                \"name\": \"4218ca1d09174218364162cd0b1a8cc1(2).jpeg\"\n            },\n            \"price\": \"280\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-03T20:30:02\"\n        },\n        {\n            \"id\": \"17\",\n            \"name\": \"Licensed Granite Shirt\",\n            \"description\": \"Rubber\",\n            \"price\": \"4696\",\n            \"restaurant_id\": \"1\",\n            \"created_at\": \"2023-10-04T01:36:52\"\n        }\n    ],\n    \"totalRecordCount\": 5,\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "ver",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/view/dishes/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"view",
+										"dishes",
+										"1"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "ver",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/view/dishes/1",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"view",
+												"dishes",
+												"1"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 05:35:46 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"BA89F41F252961D3DA13B85A966B9929\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 05:35:46 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 05:35:46 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"TableVar\": {\n        \"id\": \"1\",\n        \"name\": \"Combo 1 – Arroz Blanco + Hab. Rojas + Pollo Asado + Ens. Rusa o Ens. Verde + Guarnicion del Dia.\",\n        \"description\": \"<p>Nota las guarnición y ensalada puede variar de acuerdo a disponibilidad. Es una cajita de sorpresas.</p>\\r\\n\",\n        \"image\": {\n            \"type\": \"image/jpeg\",\n            \"url\": \"http://localhost:5000/api/file/dishes/pgRIqJy1yMdqlkMSTCWxcelDzuCyyB6g2lJ602Ql0-4N757vWGaa065Ew4b0Mpqs1-4LAxbxUdVJLlV1dS9N0UH_e0ZH7U2GKI4vrPwmjy3hd9muzLJ5rmabSfB2Xy3r\",\n            \"name\": \"4218ca1d09174218364162cd0b1a8cc1.jpeg\"\n        },\n        \"price\": \"395\",\n        \"restaurant_id\": \"3\",\n        \"created_at\": \"2023-10-03T20:30:02\",\n        \"updated_at\": \"2023-10-03T20:30:02\",\n        \"created_by\": \"1\",\n        \"updated_by\": \"1\"\n    },\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "agregar",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "{{$randomProductName}}",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "{{$randomProductMaterial}}",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "{{$randomPrice}}",
+											"type": "text"
+										},
+										{
+											"key": "restaurant_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/add/dishes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"add",
+										"dishes"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "agregar",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "{{$randomProductName}}",
+													"type": "text"
+												},
+												{
+													"key": "description",
+													"value": "{{$randomProductMaterial}}",
+													"type": "text"
+												},
+												{
+													"key": "price",
+													"value": "{{$randomPrice}}",
+													"type": "text"
+												},
+												{
+													"key": "restaurant_id",
+													"value": "1",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/add/dishes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"add",
+												"dishes"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 05:36:02 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"413663D6CA95676BFABD6C97D223DDFE\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 05:36:03 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 05:36:03 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"dishes\": {\n        \"name\": \"Tasty Rubber Chicken\",\n        \"description\": \"Fresh\",\n        \"price\": \"49017\",\n        \"restaurant_id\": \"1\",\n        \"id\": \"16\"\n    },\n    \"action\": \"add\",\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "editar",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "{{$randomProductName}}",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "{{$randomProductMaterial}}",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "{{$randomPrice}}",
+											"type": "text"
+										},
+										{
+											"key": "restaurant_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/edit/dishes/17",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"edit",
+										"dishes",
+										"17"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "editar",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "{{$randomProductName}}",
+													"type": "text"
+												},
+												{
+													"key": "description",
+													"value": "{{$randomProductMaterial}}",
+													"type": "text"
+												},
+												{
+													"key": "price",
+													"value": "{{$randomPrice}}",
+													"type": "text"
+												},
+												{
+													"key": "restaurant_id",
+													"value": "1",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/edit/dishes/17",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"edit",
+												"dishes",
+												"17"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 05:36:56 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"8A5CB18AE029D7CE2AFE3EBEC879AE81\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 05:36:57 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 05:36:57 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"dishes\": {\n        \"name\": \"Licensed Granite Shirt\",\n        \"description\": \"Rubber\",\n        \"price\": \"4696\",\n        \"restaurant_id\": \"1\"\n    },\n    \"action\": \"edit\",\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						},
+						{
+							"name": "borrar",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/delete/dishes/16",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"delete",
+										"dishes",
+										"16"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "borrar",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/delete/dishes/15",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"delete",
+												"dishes",
+												"15"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 04 Oct 2023 05:36:18 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+										},
+										{
+											"key": "ETag",
+											"value": "\"35442A562DDBD27718C6727ABB0D124E\""
+										},
+										{
+											"key": "Expires",
+											"value": "Wed, 04 Oct 2023 05:36:18 GMT"
+										},
+										{
+											"key": "Last-Modified",
+											"value": "Wed, 04 Oct 2023 05:36:18 GMT"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Language, Accept-Encoding"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"dishes\": {\n        \"id\": 15,\n        \"name\": \"Handcrafted Steel Bacon\",\n        \"description\": \"Wooden\",\n        \"image\": null,\n        \"price\": 94764,\n        \"restaurant_id\": 1,\n        \"created_at\": \"2023-10-04T01:33:19.973\",\n        \"updated_at\": \"2023-10-04T01:33:19.973\",\n        \"created_by\": 0,\n        \"updated_by\": 0\n    },\n    \"action\": \"delete\",\n    \"version\": \"20.7.0\"\n}"
+								}
+							]
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "Bearer {{token}}",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "X-Authorization",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Validate JWT token\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"JWT\");\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"token\", jsonData.JWT);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "335"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 03 Oct 2023 20:45:56 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+						},
+						{
+							"key": "ETag",
+							"value": "\"8F20D2D0E858C863FD2F15354BEB4161\""
+						},
+						{
+							"key": "Expires",
+							"value": "Tue, 03 Oct 2023 20:45:57 GMT"
+						},
+						{
+							"key": "Last-Modified",
+							"value": "Tue, 03 Oct 2023 20:45:57 GMT"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": ".AspNetCore.Cookies=CfDJ8IFe1omIioZCqf9z9M0efG9i5tpZBiaGC1qwTtnaiiRaszGBQPsAWOBCecuIkGNco7zDBo3xxpvGmEfMxYpfOQKyPqcWgPWkU-4PmYM77JOS_NxFE6dzK_frbkzOlGGbbEH36ZL3De5CSUKwQQLysTFReBEBnMWLTefg9njUnAre4w9PWUtX2nWq6K40T23IRUcWWFbKxvRgOr8TQBGTV6XfNqeM5bhDxdfiAftEjuxHZXExhYacZk3iRL5M9RlGKq9U5sYlzd68Q-QBOUSqwfKXqaDy55KJQcbEp5U8RstTXqZNpbUAnyJ2UJBKNnEmlF4__L8xH_FLEzYc1I0LTSnPjLKOF5ROpl5K47Nn3g-Q-fPGt8U6bfV9MB_Debwteqo94aVo7mc4SJER-DwkAtWua5Lh79GpTKNnpd1aTS8RZsE-CoCOnwx3AdvPzcOab63lJsXhsHqHuB2vqsGPfQF1X6fR2t10-gqTBSAjqyCr; path=/; samesite=lax; httponly"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Accept-Language, Accept-Encoding"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"JWT\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJJZCI6IjEiLCJQYXJlbnRVc2VySWQiOiIiLCJVc2VyTGV2ZWxJZCI6Ii0xIiwiUGVybWlzc2lvbiI6MCwiZXhwIjoxNjk2MzY2NTU3LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiKiJ9.fywAWaACaX5FYT1VlSK1ny6hNC0PskqByy5Kmx-xxM0\"\n}"
+				}
+			]
+		},
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "first_name",
+							"value": "{{$randomFirstName}}",
+							"type": "text"
+						},
+						{
+							"key": "last_name",
+							"value": "{{$randomLastName}}",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "{{$randomEmail}}",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{$randomUserName}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{$randomPassword}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "register",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "first_name",
+									"value": "{{$randomFirstName}}",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "{{$randomLastName}}",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{$randomEmail}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{$randomUserName}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{$randomPassword}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 04 Oct 2023 05:47:40 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "private,max-age=0,no-store,no-cache,must-revalidate"
+						},
+						{
+							"key": "ETag",
+							"value": "\"8D13E9E3FDFE8D54ACDF76DC6245B368\""
+						},
+						{
+							"key": "Expires",
+							"value": "Wed, 04 Oct 2023 05:47:41 GMT"
+						},
+						{
+							"key": "Last-Modified",
+							"value": "Wed, 04 Oct 2023 05:47:41 GMT"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Accept-Language, Accept-Encoding"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"users\": {\n        \"first_name\": \"Justyn\",\n        \"last_name\": \"Jacobs\",\n        \"email\": \"Merle_Barton@yahoo.com\",\n        \"username\": \"Rosina.Huels37\",\n        \"password\": \"$2a$11$nV6SYhDEtAlpciuN4Y7s.OtjRhdio/.VF9H3Rk5kNFMUFa7kJO5EK\",\n        \"id\": \"6\"\n    },\n    \"action\": \"add\",\n    \"version\": \"20.7.0\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "Master0fpuppets",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

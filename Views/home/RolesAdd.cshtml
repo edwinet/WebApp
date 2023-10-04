@@ -1,0 +1,180 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (rolesAdd.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!rolesAdd.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(rolesAdd.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { roles: currentTable } });
+var currentPageID = ew.PAGE_ID = "add";
+var currentForm;
+var frolesadd;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("frolesadd")
+        .setPageId("add")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.userLevelId, ew.Validators.integer], fields.id.isInvalid],
+            ["role_name", [fields.role_name.visible && fields.role_name.required ? ew.Validators.required(fields.role_name.caption) : null, ew.Validators.userLevelName('id')], fields.role_name.isInvalid],
+            ["description", [fields.description.visible && fields.description.required ? ew.Validators.required(fields.description.caption) : null], fields.description.isInvalid],
+            ["_type", [fields._type.visible && fields._type.required ? ew.Validators.required(fields._type.caption) : null], fields._type.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@rolesAdd.ShowPageHeader()
+@rolesAdd.ShowMessages()
+<form name="frolesadd" id="frolesadd" class="@(rolesAdd.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="insert">
+<input type="hidden" name="modal" value="@ConvertToInt(rolesAdd.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(rolesAdd.OldKeyName)" value="@Html.Raw(rolesAdd.OldKey)">
+<div class="ew-add-div"><!-- page* -->
+@if (rolesAdd.id.Visible) { // rolesAdd.id.Visible (begin)
+    <div id="r_id" @Html.Raw(rolesAdd.id.RowAttributes)>
+        <label id="elh_roles_id" for="x_id" class="@(rolesAdd.LeftColumnClass)">@Html.Raw(rolesAdd.id.Caption)@Html.Raw(rolesAdd.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(rolesAdd.RightColumnClass)"><div @Html.Raw(rolesAdd.id.CellAttributes)>
+<span id="el_roles_id">
+<input type="@(rolesAdd.id.InputTextType)" name="x_id" id="x_id" data-table="roles" data-field="x_id" value="@Html.Raw(rolesAdd.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(rolesAdd.id.PlaceHolder))" data-format-pattern="@(rolesAdd.id.FormatPattern)"@Html.Raw(rolesAdd.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(rolesAdd.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(rolesAdd.id.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* rolesAdd.id.Visible (end) *@
+@if (rolesAdd.role_name.Visible) { // rolesAdd.role_name.Visible (begin)
+    <div id="r_role_name" @Html.Raw(rolesAdd.role_name.RowAttributes)>
+        <label id="elh_roles_role_name" for="x_role_name" class="@(rolesAdd.LeftColumnClass)">@Html.Raw(rolesAdd.role_name.Caption)@Html.Raw(rolesAdd.role_name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(rolesAdd.RightColumnClass)"><div @Html.Raw(rolesAdd.role_name.CellAttributes)>
+<span id="el_roles_role_name">
+<input type="@(rolesAdd.role_name.InputTextType)" name="x_role_name" id="x_role_name" data-table="roles" data-field="x_role_name" value="@Html.Raw(rolesAdd.role_name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(rolesAdd.role_name.PlaceHolder))" data-format-pattern="@(rolesAdd.role_name.FormatPattern)"@Html.Raw(rolesAdd.role_name.EditAttributes) aria-describedby="x_role_name_help">
+@Html.Raw(rolesAdd.role_name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(rolesAdd.role_name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* rolesAdd.role_name.Visible (end) *@
+@if (rolesAdd.description.Visible) { // rolesAdd.description.Visible (begin)
+    <div id="r_description" @Html.Raw(rolesAdd.description.RowAttributes)>
+        <label id="elh_roles_description" for="x_description" class="@(rolesAdd.LeftColumnClass)">@Html.Raw(rolesAdd.description.Caption)@Html.Raw(rolesAdd.description.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(rolesAdd.RightColumnClass)"><div @Html.Raw(rolesAdd.description.CellAttributes)>
+<span id="el_roles_description">
+<input type="@(rolesAdd.description.InputTextType)" name="x_description" id="x_description" data-table="roles" data-field="x_description" value="@Html.Raw(rolesAdd.description.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(rolesAdd.description.PlaceHolder))" data-format-pattern="@(rolesAdd.description.FormatPattern)"@Html.Raw(rolesAdd.description.EditAttributes) aria-describedby="x_description_help">
+@Html.Raw(rolesAdd.description.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(rolesAdd.description.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* rolesAdd.description.Visible (end) *@
+@if (rolesAdd._type.Visible) { // rolesAdd._type.Visible (begin)
+    <div id="r__type" @Html.Raw(rolesAdd._type.RowAttributes)>
+        <label id="elh_roles__type" for="x__type" class="@(rolesAdd.LeftColumnClass)">@Html.Raw(rolesAdd._type.Caption)@Html.Raw(rolesAdd._type.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(rolesAdd.RightColumnClass)"><div @Html.Raw(rolesAdd._type.CellAttributes)>
+<span id="el_roles__type">
+<input type="@(rolesAdd._type.InputTextType)" name="x__type" id="x__type" data-table="roles" data-field="x__type" value="@Html.Raw(rolesAdd._type.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(rolesAdd._type.PlaceHolder))" data-format-pattern="@(rolesAdd._type.FormatPattern)"@Html.Raw(rolesAdd._type.EditAttributes) aria-describedby="x__type_help">
+@Html.Raw(rolesAdd._type.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(rolesAdd._type.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* rolesAdd._type.Visible (end) *@
+    <!-- row for permission values -->
+    <div id="rp_permission" class="row">
+        <label id="elh_permission" class="@(rolesAdd.LeftColumnClass)">@Html.Raw(Language.Phrase("Permission", true))</label>
+        <div class="@(rolesAdd.RightColumnClass)">
+@foreach (string privilege in Config.Privileges) {
+    if (privilege != "admin" || IsSysAdmin()) {
+        var priv = TitleCaseInvariant(privilege);
+        var value = Enum.Parse<Allow>(priv);
+        var phrase = Language.Phrase("Permission" + priv);
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="x__Allow@(priv)" id="@priv" value="@value"><label class="form-check-label" for="@priv">@Html.Raw(phrase)</label>
+            </div>
+    }
+}
+        </div>
+    </div>
+</div><!-- /page* -->
+@{ rolesAdd.CloseRecordset(); }
+@Html.Raw(rolesAdd.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(rolesAdd.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="frolesadd">@Html.Raw(Language.Phrase("AddBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="frolesadd" data-href="@AppPath(rolesAdd.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(rolesAdd.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@rolesAdd.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("roles");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

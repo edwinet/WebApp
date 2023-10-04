@@ -1,0 +1,621 @@
+@{
+    // View
+    View = this;
+
+    // Set up CurrentGrid
+    CurrentGrid = dishesGrid;
+
+    // Run
+    await dishesGrid.Run();
+
+    // Check action result
+    if (dishesGrid.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!dishesGrid.IsExport()) {
+<script>
+var fdishesgrid;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let currentTable = @Html.Raw(ConvertToJson(dishesGrid.ToClientVar()));
+    ew.deepAssign(ew.vars, { tables: { dishes: currentTable } });
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fdishesgrid")
+        .setPageId("grid")
+        .setFormKeyCountName("@(dishesGrid.FormKeyCountName)")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null], fields.id.isInvalid],
+            ["_name", [fields._name.visible && fields._name.required ? ew.Validators.required(fields._name.caption) : null], fields._name.isInvalid],
+            ["description", [fields.description.visible && fields.description.required ? ew.Validators.required(fields.description.caption) : null], fields.description.isInvalid],
+            ["image", [fields.image.visible && fields.image.required ? ew.Validators.fileRequired(fields.image.caption) : null], fields.image.isInvalid],
+            ["price", [fields.price.visible && fields.price.required ? ew.Validators.required(fields.price.caption) : null, ew.Validators.float], fields.price.isInvalid],
+            ["restaurant_id", [fields.restaurant_id.visible && fields.restaurant_id.required ? ew.Validators.required(fields.restaurant_id.caption) : null], fields.restaurant_id.isInvalid],
+            ["created_at", [fields.created_at.visible && fields.created_at.required ? ew.Validators.required(fields.created_at.caption) : null], fields.created_at.isInvalid]
+        ])
+
+        // Check empty row
+        .setEmptyRow(
+            function (rowIndex) {
+                let fobj = this.getForm(),
+                    fields = [["_name",false],["description",false],["image",false],["price",false],["restaurant_id",false]];
+                if (fields.some(field => ew.valueChanged(fobj, rowIndex, ...field)))
+                    return false;
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+            "restaurant_id": @Html.Raw(dishesGrid.restaurant_id.ToClientList(dishesGrid)),
+        })
+        .build();
+    window[form.id] = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+<main class="list">
+<div id="ew-list">
+@if (dishesGrid.TotalRecords > 0 || !Empty(dishesGrid.CurrentAction)) {
+<div class="card ew-card ew-grid@(dishesGrid.IsAddOrEdit ? " ew-grid-add-edit" : "") @(dishesGrid.TableGridClass)">
+@if (dishesGrid.ShowOtherOptions) {
+<div class="card-header ew-grid-upper-panel">
+    @dishesGrid.OtherOptions.RenderBody()
+</div>
+}
+<div id="fdishesgrid" class="ew-form ew-list-form">
+<div id="gmp_dishes" class="card-body ew-grid-middle-panel @(dishesGrid.TableContainerClass)" style="@(dishesGrid.TableContainerStyle)">
+<table id="tbl_dishesgrid" class="@(dishesGrid.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    dishesGrid.RowType = RowType.Header;
+
+    // Render list options
+    await dishesGrid.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@dishesGrid.ListOptions.RenderHeader("left")
+@if (dishesGrid.id.Visible) { // dishesGrid.id.Visible (begin)
+        <th data-name="id" class="@(dishesGrid.id.HeaderCellClass)"><div id="elh_dishes_id" class="dishes_id">@Html.Raw(dishesGrid.RenderFieldHeader(dishesGrid.id))</div></th>
+} @* dishesGrid.id.Visible (end) *@
+@if (dishesGrid._name.Visible) { // dishesGrid._name.Visible (begin)
+        <th data-name="_name" class="@(dishesGrid._name.HeaderCellClass)"><div id="elh_dishes__name" class="dishes__name">@Html.Raw(dishesGrid.RenderFieldHeader(dishesGrid._name))</div></th>
+} @* dishesGrid._name.Visible (end) *@
+@if (dishesGrid.description.Visible) { // dishesGrid.description.Visible (begin)
+        <th data-name="description" class="@(dishesGrid.description.HeaderCellClass)"><div id="elh_dishes_description" class="dishes_description">@Html.Raw(dishesGrid.RenderFieldHeader(dishesGrid.description))</div></th>
+} @* dishesGrid.description.Visible (end) *@
+@if (dishesGrid.image.Visible) { // dishesGrid.image.Visible (begin)
+        <th data-name="image" class="@(dishesGrid.image.HeaderCellClass)"><div id="elh_dishes_image" class="dishes_image">@Html.Raw(dishesGrid.RenderFieldHeader(dishesGrid.image))</div></th>
+} @* dishesGrid.image.Visible (end) *@
+@if (dishesGrid.price.Visible) { // dishesGrid.price.Visible (begin)
+        <th data-name="price" class="@(dishesGrid.price.HeaderCellClass)"><div id="elh_dishes_price" class="dishes_price">@Html.Raw(dishesGrid.RenderFieldHeader(dishesGrid.price))</div></th>
+} @* dishesGrid.price.Visible (end) *@
+@if (dishesGrid.restaurant_id.Visible) { // dishesGrid.restaurant_id.Visible (begin)
+        <th data-name="restaurant_id" class="@(dishesGrid.restaurant_id.HeaderCellClass)"><div id="elh_dishes_restaurant_id" class="dishes_restaurant_id">@Html.Raw(dishesGrid.RenderFieldHeader(dishesGrid.restaurant_id))</div></th>
+} @* dishesGrid.restaurant_id.Visible (end) *@
+@if (dishesGrid.created_at.Visible) { // dishesGrid.created_at.Visible (begin)
+        <th data-name="created_at" class="@(dishesGrid.created_at.HeaderCellClass)"><div id="elh_dishes_created_at" class="dishes_created_at">@Html.Raw(dishesGrid.RenderFieldHeader(dishesGrid.created_at))</div></th>
+} @* dishesGrid.created_at.Visible (end) *@
+@* Render list options (header, right) *@
+@dishesGrid.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(dishesGrid.PageNumber)">
+@{
+    await dishesGrid.SetupGrid();
+    bool eof = dishesGrid.Recordset == null; // DN
+}
+@while (dishesGrid.RecordCount < dishesGrid.StopRecord || SameString(dishesGrid.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(dishesGrid.RowIndex, "$rowindex$") &&
+        (!dishesGrid.IsGridAdd || dishesGrid.CurrentMode == "copy") &&
+        (!((dishesGrid.IsCopy || dishesGrid.IsAdd) && dishesGrid.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await dishesGrid.Recordset.ReadAsync();
+    dishesGrid.RecordCount++;
+    if (dishesGrid.RecordCount >= dishesGrid.StartRecord) {
+        await dishesGrid.SetupRow();
+
+        // Skip 1) delete row / empty row for confirm page, 2) hidden row
+        if (dishesGrid.RowAction != "delete" &&
+            dishesGrid.RowAction != "insertdelete" &&
+            !(dishesGrid.RowAction == "insert" && dishesGrid.IsConfirm && dishesGrid.EmptyRow()) &&
+            dishesGrid.RowAction != "hide") {
+    <tr @Html.Raw(dishesGrid.RowAttributes)>
+    @* Render list options (body, left) *@
+    @dishesGrid.ListOptions.RenderBody("left", dishesGrid.RowCount)
+    @if (dishesGrid.id.Visible) { // dishesGrid.id.Visible (begin)
+        <td data-name="id" @Html.Raw(dishesGrid.id.CellAttributes)>
+@if (dishesGrid.RowType == RowType.Add) { // Add (begin)
+    @* id (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_id" class="el_dishes_id"></span>
+    <input type="hidden" data-table="dishes" data-field="x_id" data-hidden="1" data-old name="o@(dishesGrid.RowIndex)_id" id="o@(dishesGrid.RowIndex)_id" value="@Html.Raw(HtmlEncode(dishesGrid.id.OldValue))">
+    @* id (end) *@
+} @* Add (end) *@
+@if (dishesGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* id (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_id" class="el_dishes_id">
+    <span @Html.Raw(dishesGrid.id.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(dishesGrid.id.EditValue)))"></span>
+    <input type="hidden" data-table="dishes" data-field="x_id" data-hidden="1" name="x@(dishesGrid.RowIndex)_id" id="x@(dishesGrid.RowIndex)_id" value="@Html.Raw(HtmlEncode(dishesGrid.id.CurrentValue))">
+    </span>
+    @* id (end) *@
+} @* Edit (end) *@
+@if (dishesGrid.RowType == RowType.View) { // View (begin)
+    @* id (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_id" class="el_dishes_id">
+    <span @Html.Raw(dishesGrid.id.ViewAttributes)>
+    @Html.Raw(dishesGrid.id.GetViewValue())</span>
+    </span>
+    if (dishesGrid.IsConfirm) {
+    <input type="hidden" data-table="dishes" data-field="x_id" data-hidden="1" name="fdishesgrid$x@(dishesGrid.RowIndex)_id" id="fdishesgrid$x@(dishesGrid.RowIndex)_id" value="@Html.Raw(HtmlEncode(dishesGrid.id.FormValue))">
+    <input type="hidden" data-table="dishes" data-field="x_id" data-hidden="1" data-old name="fdishesgrid$o@(dishesGrid.RowIndex)_id" id="fdishesgrid$o@(dishesGrid.RowIndex)_id" value="@Html.Raw(HtmlEncode(dishesGrid.id.OldValue))">
+    }
+    @* id (end) *@
+} @* View (end) *@
+</td>
+    } else {
+        <input type="hidden" data-table="dishes" data-field="x_id" data-hidden="1" name="x@(dishesGrid.RowIndex)_id" id="x@(dishesGrid.RowIndex)_id" value="@Html.Raw(HtmlEncode(dishesGrid.id.CurrentValue))">
+    } @* dishesGrid.id.Visible (end) *@
+    @if (dishesGrid._name.Visible) { // dishesGrid._name.Visible (begin)
+        <td data-name="_name" @Html.Raw(dishesGrid._name.CellAttributes)>
+@if (dishesGrid.RowType == RowType.Add) { // Add (begin)
+    @* _name (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes__name" class="el_dishes__name">
+    <input type="@(dishesGrid._name.InputTextType)" name="x@(dishesGrid.RowIndex)__name" id="x@(dishesGrid.RowIndex)__name" data-table="dishes" data-field="x__name" value="@Html.Raw(dishesGrid._name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(dishesGrid._name.PlaceHolder))" data-format-pattern="@(dishesGrid._name.FormatPattern)"@Html.Raw(dishesGrid._name.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid._name.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="dishes" data-field="x__name" data-hidden="1" data-old name="o@(dishesGrid.RowIndex)__name" id="o@(dishesGrid.RowIndex)__name" value="@Html.Raw(HtmlEncode(dishesGrid._name.OldValue))">
+    @* _name (end) *@
+} @* Add (end) *@
+@if (dishesGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* _name (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes__name" class="el_dishes__name">
+    <input type="@(dishesGrid._name.InputTextType)" name="x@(dishesGrid.RowIndex)__name" id="x@(dishesGrid.RowIndex)__name" data-table="dishes" data-field="x__name" value="@Html.Raw(dishesGrid._name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(dishesGrid._name.PlaceHolder))" data-format-pattern="@(dishesGrid._name.FormatPattern)"@Html.Raw(dishesGrid._name.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid._name.GetErrorMessage())</div>
+    </span>
+    @* _name (end) *@
+} @* Edit (end) *@
+@if (dishesGrid.RowType == RowType.View) { // View (begin)
+    @* _name (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes__name" class="el_dishes__name">
+    <span @Html.Raw(dishesGrid._name.ViewAttributes)>
+    @Html.Raw(dishesGrid._name.GetViewValue())</span>
+    </span>
+    if (dishesGrid.IsConfirm) {
+    <input type="hidden" data-table="dishes" data-field="x__name" data-hidden="1" name="fdishesgrid$x@(dishesGrid.RowIndex)__name" id="fdishesgrid$x@(dishesGrid.RowIndex)__name" value="@Html.Raw(HtmlEncode(dishesGrid._name.FormValue))">
+    <input type="hidden" data-table="dishes" data-field="x__name" data-hidden="1" data-old name="fdishesgrid$o@(dishesGrid.RowIndex)__name" id="fdishesgrid$o@(dishesGrid.RowIndex)__name" value="@Html.Raw(HtmlEncode(dishesGrid._name.OldValue))">
+    }
+    @* _name (end) *@
+} @* View (end) *@
+</td>
+    } @* dishesGrid._name.Visible (end) *@
+    @if (dishesGrid.description.Visible) { // dishesGrid.description.Visible (begin)
+        <td data-name="description" @Html.Raw(dishesGrid.description.CellAttributes)>
+@if (dishesGrid.RowType == RowType.Add) { // Add (begin)
+    @* description (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_description" class="el_dishes_description">
+    @{ dishesGrid.description.EditAttrs.AppendClass("editor"); }
+    <textarea data-table="dishes" data-field="x_description" name="x@(dishesGrid.RowIndex)_description" id="x@(dishesGrid.RowIndex)_description" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(dishesGrid.description.PlaceHolder))"@Html.Raw(dishesGrid.description.EditAttributes)>@(dishesGrid.description.EditValue)</textarea>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid.description.GetErrorMessage())</div>
+    <script>
+    loadjs.ready(["fdishesgrid", "editor"], function() {
+    	ew.createEditor("fdishesgrid", "x@(dishesGrid.RowIndex)_description", 35, 4, @(dishesGrid.description.ReadOnly || false ? "true" : "false"));
+    });
+    </script>
+    </span>
+    <input type="hidden" data-table="dishes" data-field="x_description" data-hidden="1" data-old name="o@(dishesGrid.RowIndex)_description" id="o@(dishesGrid.RowIndex)_description" value="@Html.Raw(HtmlEncode(dishesGrid.description.OldValue))">
+    @* description (end) *@
+} @* Add (end) *@
+@if (dishesGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* description (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_description" class="el_dishes_description">
+    @{ dishesGrid.description.EditAttrs.AppendClass("editor"); }
+    <textarea data-table="dishes" data-field="x_description" name="x@(dishesGrid.RowIndex)_description" id="x@(dishesGrid.RowIndex)_description" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(dishesGrid.description.PlaceHolder))"@Html.Raw(dishesGrid.description.EditAttributes)>@(dishesGrid.description.EditValue)</textarea>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid.description.GetErrorMessage())</div>
+    <script>
+    loadjs.ready(["fdishesgrid", "editor"], function() {
+    	ew.createEditor("fdishesgrid", "x@(dishesGrid.RowIndex)_description", 35, 4, @(dishesGrid.description.ReadOnly || false ? "true" : "false"));
+    });
+    </script>
+    </span>
+    @* description (end) *@
+} @* Edit (end) *@
+@if (dishesGrid.RowType == RowType.View) { // View (begin)
+    @* description (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_description" class="el_dishes_description">
+    <span @Html.Raw(dishesGrid.description.ViewAttributes)>
+    @Html.Raw(dishesGrid.description.GetViewValue())</span>
+    </span>
+    if (dishesGrid.IsConfirm) {
+    <input type="hidden" data-table="dishes" data-field="x_description" data-hidden="1" name="fdishesgrid$x@(dishesGrid.RowIndex)_description" id="fdishesgrid$x@(dishesGrid.RowIndex)_description" value="@Html.Raw(HtmlEncode(dishesGrid.description.FormValue))">
+    <input type="hidden" data-table="dishes" data-field="x_description" data-hidden="1" data-old name="fdishesgrid$o@(dishesGrid.RowIndex)_description" id="fdishesgrid$o@(dishesGrid.RowIndex)_description" value="@Html.Raw(HtmlEncode(dishesGrid.description.OldValue))">
+    }
+    @* description (end) *@
+} @* View (end) *@
+</td>
+    } @* dishesGrid.description.Visible (end) *@
+    @if (dishesGrid.image.Visible) { // dishesGrid.image.Visible (begin)
+        <td data-name="image" @Html.Raw(dishesGrid.image.CellAttributes)>
+@if (dishesGrid.RowAction == "insert") { // Add (begin)
+    @* image (begin) *@
+    @if (!dishesGrid.IsConfirm) { // image (begin)
+    <span id="el@(dishesGrid.RowIndex)_dishes_image" class="el_dishes_image">
+    <div id="fd_x@(dishesGrid.RowIndex)_image" class="fileinput-button ew-file-drop-zone">
+        <input
+            type="file"
+            id="x@(dishesGrid.RowIndex)_image"
+            name="x@(dishesGrid.RowIndex)_image"
+            class="form-control ew-file-input"
+            title="@(dishesGrid.image.Title)"
+            lang="@(CurrentLanguageID)"
+            data-table="dishes"
+            data-field="x_image"
+            data-size="255"
+            data-accept-file-types="@(dishesGrid.image.AcceptFileTypes)"
+            data-max-file-size="@(dishesGrid.image.UploadMaxFileSize)"
+            data-max-number-of-files="null"
+            data-disable-image-crop="@(dishesGrid.image.ImageCropper ? 0 : 1)"
+            @Html.Raw((dishesGrid.image.ReadOnly || dishesGrid.image.Disabled) ? " disabled" : "")
+            @Html.Raw(dishesGrid.image.EditAttributes)
+        >
+        <div class="text-muted ew-file-text">@Html.Raw(Language.Phrase("ChooseFile"))</div>
+    </div>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid.image.GetErrorMessage())</div>
+    <input type="hidden" name="fn_x@(dishesGrid.RowIndex)_image" id= "fn_x@(dishesGrid.RowIndex)_image" value="@(dishesGrid.image.Upload.FileName)">
+    <input type="hidden" name="fa_x@(dishesGrid.RowIndex)_image" id= "fa_x@(dishesGrid.RowIndex)_image" value="0">
+    <table id="ft_x@(dishesGrid.RowIndex)_image" class="table table-sm float-start ew-upload-table"><tbody class="files"></tbody></table>
+    </span>
+    } else { // image (confirm)
+    <span id="el@(dishesGrid.RowIndex)_dishes_image" class="el_dishes_image">
+    <div id="fd_x@(dishesGrid.RowIndex)_image">
+        <input
+            type="file"
+            id="x@(dishesGrid.RowIndex)_image"
+            name="x@(dishesGrid.RowIndex)_image"
+            class="form-control ew-file-input d-none"
+            title="@(dishesGrid.image.Title)"
+            lang="@(CurrentLanguageID)"
+            data-table="dishes"
+            data-field="x_image"
+            data-size="255"
+            data-accept-file-types="@(dishesGrid.image.AcceptFileTypes)"
+            data-max-file-size="@(dishesGrid.image.UploadMaxFileSize)"
+            data-max-number-of-files="null"
+            data-disable-image-crop="@(dishesGrid.image.ImageCropper ? 0 : 1)"
+            @Html.Raw(dishesGrid.image.EditAttributes)
+        >
+    </div>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid.image.GetErrorMessage())</div>
+    <input type="hidden" name="fn_x@(dishesGrid.RowIndex)_image" id= "fn_x@(dishesGrid.RowIndex)_image" value="@(dishesGrid.image.Upload.FileName)">
+    <input type="hidden" name="fa_x@(dishesGrid.RowIndex)_image" id= "fa_x@(dishesGrid.RowIndex)_image" value="0">
+    <table id="ft_x@(dishesGrid.RowIndex)_image" class="table table-sm float-start ew-upload-table"><tbody class="files"></tbody></table>
+    </span>
+    } @* image (end) *@
+    <input type="hidden" data-table="dishes" data-field="x_image" data-hidden="1" data-old name="o@(dishesGrid.RowIndex)_image" id="o@(dishesGrid.RowIndex)_image" value="@Html.Raw(HtmlEncode(dishesGrid.image.OldValue))">
+    @* image (end) *@
+} else if (dishesGrid.RowType == RowType.View) { // View record
+    @* image (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_image" class="el_dishes_image">
+    <span>
+    @Html.Raw(await GetFileViewTag((DbField)dishesGrid.image, ConvertToString(dishesGrid.image.GetViewValue()), false))
+    </span>
+    </span>
+    @* image (end) *@
+} else  { // Edit (begin)
+    @* image (begin) *@
+    @if (!dishesGrid.IsConfirm) { // image (begin)
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_image" class="el_dishes_image">
+    <div id="fd_x@(dishesGrid.RowIndex)_image">
+        <input
+            type="file"
+            id="x@(dishesGrid.RowIndex)_image"
+            name="x@(dishesGrid.RowIndex)_image"
+            class="form-control ew-file-input d-none"
+            title="@(dishesGrid.image.Title)"
+            lang="@(CurrentLanguageID)"
+            data-table="dishes"
+            data-field="x_image"
+            data-size="255"
+            data-accept-file-types="@(dishesGrid.image.AcceptFileTypes)"
+            data-max-file-size="@(dishesGrid.image.UploadMaxFileSize)"
+            data-max-number-of-files="null"
+            data-disable-image-crop="@(dishesGrid.image.ImageCropper ? 0 : 1)"
+            @Html.Raw(dishesGrid.image.EditAttributes)
+        >
+    </div>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid.image.GetErrorMessage())</div>
+    <input type="hidden" name="fn_x@(dishesGrid.RowIndex)_image" id= "fn_x@(dishesGrid.RowIndex)_image" value="@(dishesGrid.image.Upload.FileName)">
+    <input type="hidden" name="fa_x@(dishesGrid.RowIndex)_image" id= "fa_x@(dishesGrid.RowIndex)_image" value="@(Post("fa_x" + dishesGrid.RowIndex + "_image") == "0" ? "0" : "1")">
+    <table id="ft_x@(dishesGrid.RowIndex)_image" class="table table-sm float-start ew-upload-table"><tbody class="files"></tbody></table>
+    </span>
+    } else { // image (confirm)
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_image" class="el_dishes_image">
+    <div id="fd_x@(dishesGrid.RowIndex)_image">
+        <input
+            type="file"
+            id="x@(dishesGrid.RowIndex)_image"
+            name="x@(dishesGrid.RowIndex)_image"
+            class="form-control ew-file-input d-none"
+            title="@(dishesGrid.image.Title)"
+            lang="@(CurrentLanguageID)"
+            data-table="dishes"
+            data-field="x_image"
+            data-size="255"
+            data-accept-file-types="@(dishesGrid.image.AcceptFileTypes)"
+            data-max-file-size="@(dishesGrid.image.UploadMaxFileSize)"
+            data-max-number-of-files="null"
+            data-disable-image-crop="@(dishesGrid.image.ImageCropper ? 0 : 1)"
+            @Html.Raw(dishesGrid.image.EditAttributes)
+        >
+    </div>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid.image.GetErrorMessage())</div>
+    <input type="hidden" name="fn_x@(dishesGrid.RowIndex)_image" id= "fn_x@(dishesGrid.RowIndex)_image" value="@(dishesGrid.image.Upload.FileName)">
+    <input type="hidden" name="fa_x@(dishesGrid.RowIndex)_image" id= "fa_x@(dishesGrid.RowIndex)_image" value="@(Post("fa_x" + dishesGrid.RowIndex + "_image") == "0" ? "0" : "1")">
+    <table id="ft_x@(dishesGrid.RowIndex)_image" class="table table-sm float-start ew-upload-table"><tbody class="files"></tbody></table>
+    </span>
+    } @* image (end) *@
+    @* image (end) *@
+} @* Add/Edit (end) *@
+</td>
+    } @* dishesGrid.image.Visible (end) *@
+    @if (dishesGrid.price.Visible) { // dishesGrid.price.Visible (begin)
+        <td data-name="price" @Html.Raw(dishesGrid.price.CellAttributes)>
+@if (dishesGrid.RowType == RowType.Add) { // Add (begin)
+    @* price (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_price" class="el_dishes_price">
+    <input type="@(dishesGrid.price.InputTextType)" name="x@(dishesGrid.RowIndex)_price" id="x@(dishesGrid.RowIndex)_price" data-table="dishes" data-field="x_price" value="@Html.Raw(dishesGrid.price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(dishesGrid.price.PlaceHolder))" data-format-pattern="@(dishesGrid.price.FormatPattern)"@Html.Raw(dishesGrid.price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid.price.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="dishes" data-field="x_price" data-hidden="1" data-old name="o@(dishesGrid.RowIndex)_price" id="o@(dishesGrid.RowIndex)_price" value="@Html.Raw(HtmlEncode(dishesGrid.price.OldValue))">
+    @* price (end) *@
+} @* Add (end) *@
+@if (dishesGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* price (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_price" class="el_dishes_price">
+    <input type="@(dishesGrid.price.InputTextType)" name="x@(dishesGrid.RowIndex)_price" id="x@(dishesGrid.RowIndex)_price" data-table="dishes" data-field="x_price" value="@Html.Raw(dishesGrid.price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(dishesGrid.price.PlaceHolder))" data-format-pattern="@(dishesGrid.price.FormatPattern)"@Html.Raw(dishesGrid.price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(dishesGrid.price.GetErrorMessage())</div>
+    </span>
+    @* price (end) *@
+} @* Edit (end) *@
+@if (dishesGrid.RowType == RowType.View) { // View (begin)
+    @* price (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_price" class="el_dishes_price">
+    <span @Html.Raw(dishesGrid.price.ViewAttributes)>
+    @Html.Raw(dishesGrid.price.GetViewValue())</span>
+    </span>
+    if (dishesGrid.IsConfirm) {
+    <input type="hidden" data-table="dishes" data-field="x_price" data-hidden="1" name="fdishesgrid$x@(dishesGrid.RowIndex)_price" id="fdishesgrid$x@(dishesGrid.RowIndex)_price" value="@Html.Raw(HtmlEncode(dishesGrid.price.FormValue))">
+    <input type="hidden" data-table="dishes" data-field="x_price" data-hidden="1" data-old name="fdishesgrid$o@(dishesGrid.RowIndex)_price" id="fdishesgrid$o@(dishesGrid.RowIndex)_price" value="@Html.Raw(HtmlEncode(dishesGrid.price.OldValue))">
+    }
+    @* price (end) *@
+} @* View (end) *@
+</td>
+    } @* dishesGrid.price.Visible (end) *@
+    @if (dishesGrid.restaurant_id.Visible) { // dishesGrid.restaurant_id.Visible (begin)
+        <td data-name="restaurant_id" @Html.Raw(dishesGrid.restaurant_id.CellAttributes)>
+@if (dishesGrid.RowType == RowType.Add) { // Add (begin)
+    @* restaurant_id (begin) *@
+    @if (!Empty(dishesGrid.restaurant_id.SessionValue)) {
+    <span @Html.Raw(dishesGrid.restaurant_id.ViewAttributes)>
+    <span class="form-control-plaintext">@Html.Raw(dishesGrid.restaurant_id.DisplayValue(dishesGrid.restaurant_id.ViewValue))</span></span>
+    <input type="hidden" id="x@(dishesGrid.RowIndex)_restaurant_id" name="x@(dishesGrid.RowIndex)_restaurant_id" value="@(HtmlEncode(dishesGrid.restaurant_id.CurrentValue))" data-hidden="1">
+    } else {
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_restaurant_id" class="el_dishes_restaurant_id">
+        <select
+            id="x@(dishesGrid.RowIndex)_restaurant_id"
+            name="x@(dishesGrid.RowIndex)_restaurant_id"
+            class="form-select ew-select@(dishesGrid.restaurant_id.IsInvalidClass)"
+            data-select2-id="fdishesgrid_x@(dishesGrid.RowIndex)_restaurant_id"
+            data-table="dishes"
+            data-field="x_restaurant_id"
+            data-value-separator="@(dishesGrid.restaurant_id.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(dishesGrid.restaurant_id.PlaceHolder))"
+            @Html.Raw(dishesGrid.restaurant_id.EditAttributes)>
+            @(dishesGrid.restaurant_id.SelectOptionListHtml("x" + dishesGrid.RowIndex + "_restaurant_id"))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(dishesGrid.restaurant_id.GetErrorMessage())</div>
+    @Html.Raw(dishesGrid.restaurant_id.Lookup.GetParamTag(dishesGrid, "p_x" + dishesGrid.RowIndex + "_restaurant_id"))
+    <script>
+    loadjs.ready("fdishesgrid", function() {
+        var options = { name: "x@(dishesGrid.RowIndex)_restaurant_id", selectId: "fdishesgrid_x@(dishesGrid.RowIndex)_restaurant_id" },
+            el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+        if (!el)
+            return;
+        options.closeOnSelect = !options.multiple;
+        options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+        if (fdishesgrid.lists.restaurant_id?.lookupOptions.length) {
+            options.data = { id: "x@(dishesGrid.RowIndex)_restaurant_id", form: "fdishesgrid" };
+        } else {
+            options.ajax = { id: "x@(dishesGrid.RowIndex)_restaurant_id", form: "fdishesgrid", limit: ew.LOOKUP_PAGE_SIZE };
+        }
+        options.minimumResultsForSearch = Infinity;
+        options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.dishes.fields.restaurant_id.selectOptions);
+        ew.createSelect(options);
+    });
+    </script>
+    </span>
+    }
+    <input type="hidden" data-table="dishes" data-field="x_restaurant_id" data-hidden="1" data-old name="o@(dishesGrid.RowIndex)_restaurant_id" id="o@(dishesGrid.RowIndex)_restaurant_id" value="@Html.Raw(HtmlEncode(dishesGrid.restaurant_id.OldValue))">
+    @* restaurant_id (end) *@
+} @* Add (end) *@
+@if (dishesGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* restaurant_id (begin) *@
+    @if (!Empty(dishesGrid.restaurant_id.SessionValue)) {
+    <span @Html.Raw(dishesGrid.restaurant_id.ViewAttributes)>
+    <span class="form-control-plaintext">@Html.Raw(dishesGrid.restaurant_id.DisplayValue(dishesGrid.restaurant_id.ViewValue))</span></span>
+    <input type="hidden" id="x@(dishesGrid.RowIndex)_restaurant_id" name="x@(dishesGrid.RowIndex)_restaurant_id" value="@(HtmlEncode(dishesGrid.restaurant_id.CurrentValue))" data-hidden="1">
+    } else {
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_restaurant_id" class="el_dishes_restaurant_id">
+        <select
+            id="x@(dishesGrid.RowIndex)_restaurant_id"
+            name="x@(dishesGrid.RowIndex)_restaurant_id"
+            class="form-select ew-select@(dishesGrid.restaurant_id.IsInvalidClass)"
+            data-select2-id="fdishesgrid_x@(dishesGrid.RowIndex)_restaurant_id"
+            data-table="dishes"
+            data-field="x_restaurant_id"
+            data-value-separator="@(dishesGrid.restaurant_id.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(dishesGrid.restaurant_id.PlaceHolder))"
+            @Html.Raw(dishesGrid.restaurant_id.EditAttributes)>
+            @(dishesGrid.restaurant_id.SelectOptionListHtml("x" + dishesGrid.RowIndex + "_restaurant_id"))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(dishesGrid.restaurant_id.GetErrorMessage())</div>
+    @Html.Raw(dishesGrid.restaurant_id.Lookup.GetParamTag(dishesGrid, "p_x" + dishesGrid.RowIndex + "_restaurant_id"))
+    <script>
+    loadjs.ready("fdishesgrid", function() {
+        var options = { name: "x@(dishesGrid.RowIndex)_restaurant_id", selectId: "fdishesgrid_x@(dishesGrid.RowIndex)_restaurant_id" },
+            el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+        if (!el)
+            return;
+        options.closeOnSelect = !options.multiple;
+        options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+        if (fdishesgrid.lists.restaurant_id?.lookupOptions.length) {
+            options.data = { id: "x@(dishesGrid.RowIndex)_restaurant_id", form: "fdishesgrid" };
+        } else {
+            options.ajax = { id: "x@(dishesGrid.RowIndex)_restaurant_id", form: "fdishesgrid", limit: ew.LOOKUP_PAGE_SIZE };
+        }
+        options.minimumResultsForSearch = Infinity;
+        options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.dishes.fields.restaurant_id.selectOptions);
+        ew.createSelect(options);
+    });
+    </script>
+    </span>
+    }
+    @* restaurant_id (end) *@
+} @* Edit (end) *@
+@if (dishesGrid.RowType == RowType.View) { // View (begin)
+    @* restaurant_id (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_restaurant_id" class="el_dishes_restaurant_id">
+    <span @Html.Raw(dishesGrid.restaurant_id.ViewAttributes)>
+    @Html.Raw(dishesGrid.restaurant_id.GetViewValue())</span>
+    </span>
+    if (dishesGrid.IsConfirm) {
+    <input type="hidden" data-table="dishes" data-field="x_restaurant_id" data-hidden="1" name="fdishesgrid$x@(dishesGrid.RowIndex)_restaurant_id" id="fdishesgrid$x@(dishesGrid.RowIndex)_restaurant_id" value="@Html.Raw(HtmlEncode(dishesGrid.restaurant_id.FormValue))">
+    <input type="hidden" data-table="dishes" data-field="x_restaurant_id" data-hidden="1" data-old name="fdishesgrid$o@(dishesGrid.RowIndex)_restaurant_id" id="fdishesgrid$o@(dishesGrid.RowIndex)_restaurant_id" value="@Html.Raw(HtmlEncode(dishesGrid.restaurant_id.OldValue))">
+    }
+    @* restaurant_id (end) *@
+} @* View (end) *@
+</td>
+    } @* dishesGrid.restaurant_id.Visible (end) *@
+    @if (dishesGrid.created_at.Visible) { // dishesGrid.created_at.Visible (begin)
+        <td data-name="created_at" @Html.Raw(dishesGrid.created_at.CellAttributes)>
+@if (dishesGrid.RowType == RowType.Add) { // Add (begin)
+    @* created_at (begin) *@
+    <input type="hidden" data-table="dishes" data-field="x_created_at" data-hidden="1" data-old name="o@(dishesGrid.RowIndex)_created_at" id="o@(dishesGrid.RowIndex)_created_at" value="@Html.Raw(HtmlEncode(dishesGrid.created_at.OldValue))">
+    @* created_at (end) *@
+} @* Add (end) *@
+@if (dishesGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* created_at (begin) *@
+    @* created_at (end) *@
+} @* Edit (end) *@
+@if (dishesGrid.RowType == RowType.View) { // View (begin)
+    @* created_at (begin) *@
+    <span id="el@(dishesGrid.RowIndex == "$rowindex$" ? "$rowindex$" : dishesGrid.RowCount)_dishes_created_at" class="el_dishes_created_at">
+    <span @Html.Raw(dishesGrid.created_at.ViewAttributes)>
+    @Html.Raw(dishesGrid.created_at.GetViewValue())</span>
+    </span>
+    if (dishesGrid.IsConfirm) {
+    <input type="hidden" data-table="dishes" data-field="x_created_at" data-hidden="1" name="fdishesgrid$x@(dishesGrid.RowIndex)_created_at" id="fdishesgrid$x@(dishesGrid.RowIndex)_created_at" value="@Html.Raw(HtmlEncode(dishesGrid.created_at.FormValue))">
+    <input type="hidden" data-table="dishes" data-field="x_created_at" data-hidden="1" data-old name="fdishesgrid$o@(dishesGrid.RowIndex)_created_at" id="fdishesgrid$o@(dishesGrid.RowIndex)_created_at" value="@Html.Raw(HtmlEncode(dishesGrid.created_at.OldValue))">
+    }
+    @* created_at (end) *@
+} @* View (end) *@
+</td>
+    } @* dishesGrid.created_at.Visible (end) *@
+    @* Render list options (body, right) *@
+    @dishesGrid.ListOptions.RenderBody("right", dishesGrid.RowCount)
+    </tr>
+if (dishesGrid.RowType == RowType.Add || dishesGrid.RowType == RowType.Edit) {
+<script>
+loadjs.ready(["fdishesgrid","load"], () => fdishesgrid.updateLists(@(dishesGrid.RowIndex)@(dishesGrid.IsAdd || dishesGrid.IsEdit || dishesGrid.IsCopy || SameString(dishesGrid.RowIndex, "$rowindex$") ? ", true" : "")));
+</script>
+}
+    } @* End delete row checking *@
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(dishesGrid.RowIndex, "$rowindex$"))
+        dishesGrid.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((dishesGrid.IsCopy || dishesGrid.IsAdd) && dishesGrid.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        dishesGrid.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+@if (dishesGrid.CurrentMode == "add" || dishesGrid.CurrentMode == "copy") {
+<input type="hidden" name="@(dishesGrid.FormKeyCountName)" id="@(dishesGrid.FormKeyCountName)" value="@(dishesGrid.KeyCount)">
+@Html.Raw(dishesGrid.MultiSelectKey)
+}
+@if (dishesGrid.CurrentMode == "edit") {
+<input type="hidden" name="@(dishesGrid.FormKeyCountName)" id="@(dishesGrid.FormKeyCountName)" value="@(dishesGrid.KeyCount)">
+@Html.Raw(dishesGrid.MultiSelectKey)
+}
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(dishesGrid.CurrentMode)) {
+<input type="hidden" name="action" id="action" value="">
+}
+<input type="hidden" name="detailpage" value="fdishesgrid">
+</div><!-- /.ew-list-form -->
+@{ dishesGrid.CloseRecordset(); }
+@if (dishesGrid.ShowOtherOptions) {
+<div class="card-footer ew-grid-lower-panel">
+    @dishesGrid.OtherOptions.RenderBody("bottom")
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@dishesGrid.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@if (!dishesGrid.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("dishes");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}
+@{
+    // Close Recordset
+    dishesGrid.CloseRecordset(); // DN
+    // Clear CurrentGrid
+    CurrentGrid = null;
+}

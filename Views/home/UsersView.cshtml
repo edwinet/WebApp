@@ -1,0 +1,218 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (usersView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!usersView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!usersView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!usersView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @usersView.ExportOptions.RenderBody()
+    @usersView.OtherOptions.RenderBody()
+</div>
+}
+@usersView.ShowPageHeader()
+@usersView.ShowMessages()
+<main class="view">
+@if (!usersView.IsModal) {
+if (!usersView.IsExport()) {
+@usersView.Pager.Render()
+}
+}
+<form name="fusersview" id="fusersview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!usersView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(usersView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { users: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var fusersview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fusersview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(usersView.IsModal)">
+<table class="@(usersView.TableClass)">
+@if (usersView.id.Visible) { // usersView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(usersView.id.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_id">@Html.Raw(usersView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(usersView.id.CellAttributes)>
+<span id="el_users_id">
+<span @Html.Raw(usersView.id.ViewAttributes)>
+@Html.Raw(usersView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.id.Visible (end) *@
+@if (usersView.first_name.Visible) { // usersView.first_name.Visible (begin)
+    <tr id="r_first_name" @Html.Raw(usersView.first_name.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_first_name">@Html.Raw(usersView.first_name.Caption)</span></td>
+        <td data-name="first_name" @Html.Raw(usersView.first_name.CellAttributes)>
+<span id="el_users_first_name">
+<span @Html.Raw(usersView.first_name.ViewAttributes)>
+@Html.Raw(usersView.first_name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.first_name.Visible (end) *@
+@if (usersView.last_name.Visible) { // usersView.last_name.Visible (begin)
+    <tr id="r_last_name" @Html.Raw(usersView.last_name.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_last_name">@Html.Raw(usersView.last_name.Caption)</span></td>
+        <td data-name="last_name" @Html.Raw(usersView.last_name.CellAttributes)>
+<span id="el_users_last_name">
+<span @Html.Raw(usersView.last_name.ViewAttributes)>
+@Html.Raw(usersView.last_name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.last_name.Visible (end) *@
+@if (usersView._email.Visible) { // usersView._email.Visible (begin)
+    <tr id="r__email" @Html.Raw(usersView._email.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users__email">@Html.Raw(usersView._email.Caption)</span></td>
+        <td data-name="_email" @Html.Raw(usersView._email.CellAttributes)>
+<span id="el_users__email">
+<span @Html.Raw(usersView._email.ViewAttributes)>
+@Html.Raw(usersView._email.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView._email.Visible (end) *@
+@if (usersView._username.Visible) { // usersView._username.Visible (begin)
+    <tr id="r__username" @Html.Raw(usersView._username.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users__username">@Html.Raw(usersView._username.Caption)</span></td>
+        <td data-name="_username" @Html.Raw(usersView._username.CellAttributes)>
+<span id="el_users__username">
+<span @Html.Raw(usersView._username.ViewAttributes)>
+@Html.Raw(usersView._username.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView._username.Visible (end) *@
+@if (usersView.mobile.Visible) { // usersView.mobile.Visible (begin)
+    <tr id="r_mobile" @Html.Raw(usersView.mobile.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_mobile">@Html.Raw(usersView.mobile.Caption)</span></td>
+        <td data-name="mobile" @Html.Raw(usersView.mobile.CellAttributes)>
+<span id="el_users_mobile">
+<span @Html.Raw(usersView.mobile.ViewAttributes)>
+@Html.Raw(usersView.mobile.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.mobile.Visible (end) *@
+@if (usersView.photo.Visible) { // usersView.photo.Visible (begin)
+    <tr id="r_photo" @Html.Raw(usersView.photo.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_photo">@Html.Raw(usersView.photo.Caption)</span></td>
+        <td data-name="photo" @Html.Raw(usersView.photo.CellAttributes)>
+<span id="el_users_photo">
+<span>
+@Html.Raw(await GetFileViewTag((DbField)usersView.photo, ConvertToString(usersView.photo.GetViewValue()), false))
+</span>
+</span></td>
+    </tr>
+} @* usersView.photo.Visible (end) *@
+@if (usersView.role_id.Visible) { // usersView.role_id.Visible (begin)
+    <tr id="r_role_id" @Html.Raw(usersView.role_id.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_role_id">@Html.Raw(usersView.role_id.Caption)</span></td>
+        <td data-name="role_id" @Html.Raw(usersView.role_id.CellAttributes)>
+<span id="el_users_role_id">
+<span @Html.Raw(usersView.role_id.ViewAttributes)>
+@Html.Raw(usersView.role_id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.role_id.Visible (end) *@
+@if (usersView.provider.Visible) { // usersView.provider.Visible (begin)
+    <tr id="r_provider" @Html.Raw(usersView.provider.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_provider">@Html.Raw(usersView.provider.Caption)</span></td>
+        <td data-name="provider" @Html.Raw(usersView.provider.CellAttributes)>
+<span id="el_users_provider">
+<span @Html.Raw(usersView.provider.ViewAttributes)>
+@Html.Raw(usersView.provider.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.provider.Visible (end) *@
+@if (usersView.activated.Visible) { // usersView.activated.Visible (begin)
+    <tr id="r_activated" @Html.Raw(usersView.activated.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_activated">@Html.Raw(usersView.activated.Caption)</span></td>
+        <td data-name="activated" @Html.Raw(usersView.activated.CellAttributes)>
+<span id="el_users_activated">
+<span @Html.Raw(usersView.activated.ViewAttributes)>
+@Html.Raw(usersView.activated.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.activated.Visible (end) *@
+@if (usersView.created_at.Visible) { // usersView.created_at.Visible (begin)
+    <tr id="r_created_at" @Html.Raw(usersView.created_at.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_created_at">@Html.Raw(usersView.created_at.Caption)</span></td>
+        <td data-name="created_at" @Html.Raw(usersView.created_at.CellAttributes)>
+<span id="el_users_created_at">
+<span @Html.Raw(usersView.created_at.ViewAttributes)>
+@Html.Raw(usersView.created_at.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.created_at.Visible (end) *@
+@if (usersView.updated_at.Visible) { // usersView.updated_at.Visible (begin)
+    <tr id="r_updated_at" @Html.Raw(usersView.updated_at.RowAttributes)>
+        <td class="@(usersView.TableLeftColumnClass)"><span id="elh_users_updated_at">@Html.Raw(usersView.updated_at.Caption)</span></td>
+        <td data-name="updated_at" @Html.Raw(usersView.updated_at.CellAttributes)>
+<span id="el_users_updated_at">
+<span @Html.Raw(usersView.updated_at.ViewAttributes)>
+@Html.Raw(usersView.updated_at.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* usersView.updated_at.Visible (end) *@
+</table>
+@{ usersView.CloseRecordset(); }
+</form>
+@if (!usersView.IsModal) {
+if (!usersView.IsExport()) {
+<div><!-- DN -->
+@usersView.Pager.Render()
+</div>
+}
+}
+</main>
+@usersView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!usersView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

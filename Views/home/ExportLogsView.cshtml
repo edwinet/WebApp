@@ -1,0 +1,177 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (exportLogsView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!exportLogsView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!exportLogsView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!exportLogsView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @exportLogsView.ExportOptions.RenderBody()
+    @exportLogsView.OtherOptions.RenderBody()
+</div>
+}
+@exportLogsView.ShowPageHeader()
+@exportLogsView.ShowMessages()
+<main class="view">
+@if (!exportLogsView.IsModal) {
+if (!exportLogsView.IsExport()) {
+@exportLogsView.Pager.Render()
+}
+}
+<form name="fexport_logsview" id="fexport_logsview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!exportLogsView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(exportLogsView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { export_logs: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var fexport_logsview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fexport_logsview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(exportLogsView.IsModal)">
+<table class="@(exportLogsView.TableClass)">
+@if (exportLogsView.file_id.Visible) { // exportLogsView.file_id.Visible (begin)
+    <tr id="r_file_id" @Html.Raw(exportLogsView.file_id.RowAttributes)>
+        <td class="@(exportLogsView.TableLeftColumnClass)"><span id="elh_export_logs_file_id">@Html.Raw(exportLogsView.file_id.Caption)</span></td>
+        <td data-name="file_id" @Html.Raw(exportLogsView.file_id.CellAttributes)>
+<span id="el_export_logs_file_id">
+<span @Html.Raw(exportLogsView.file_id.ViewAttributes)>
+@Html.Raw(exportLogsView.file_id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* exportLogsView.file_id.Visible (end) *@
+@if (exportLogsView.created_at.Visible) { // exportLogsView.created_at.Visible (begin)
+    <tr id="r_created_at" @Html.Raw(exportLogsView.created_at.RowAttributes)>
+        <td class="@(exportLogsView.TableLeftColumnClass)"><span id="elh_export_logs_created_at">@Html.Raw(exportLogsView.created_at.Caption)</span></td>
+        <td data-name="created_at" @Html.Raw(exportLogsView.created_at.CellAttributes)>
+<span id="el_export_logs_created_at">
+<span @Html.Raw(exportLogsView.created_at.ViewAttributes)>
+@Html.Raw(exportLogsView.created_at.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* exportLogsView.created_at.Visible (end) *@
+@if (exportLogsView._username.Visible) { // exportLogsView._username.Visible (begin)
+    <tr id="r__username" @Html.Raw(exportLogsView._username.RowAttributes)>
+        <td class="@(exportLogsView.TableLeftColumnClass)"><span id="elh_export_logs__username">@Html.Raw(exportLogsView._username.Caption)</span></td>
+        <td data-name="_username" @Html.Raw(exportLogsView._username.CellAttributes)>
+<span id="el_export_logs__username">
+<span @Html.Raw(exportLogsView._username.ViewAttributes)>
+@Html.Raw(exportLogsView._username.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* exportLogsView._username.Visible (end) *@
+@if (exportLogsView.export_type.Visible) { // exportLogsView.export_type.Visible (begin)
+    <tr id="r_export_type" @Html.Raw(exportLogsView.export_type.RowAttributes)>
+        <td class="@(exportLogsView.TableLeftColumnClass)"><span id="elh_export_logs_export_type">@Html.Raw(exportLogsView.export_type.Caption)</span></td>
+        <td data-name="export_type" @Html.Raw(exportLogsView.export_type.CellAttributes)>
+<span id="el_export_logs_export_type">
+<span @Html.Raw(exportLogsView.export_type.ViewAttributes)>
+@Html.Raw(exportLogsView.export_type.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* exportLogsView.export_type.Visible (end) *@
+@if (exportLogsView.entity.Visible) { // exportLogsView.entity.Visible (begin)
+    <tr id="r_entity" @Html.Raw(exportLogsView.entity.RowAttributes)>
+        <td class="@(exportLogsView.TableLeftColumnClass)"><span id="elh_export_logs_entity">@Html.Raw(exportLogsView.entity.Caption)</span></td>
+        <td data-name="entity" @Html.Raw(exportLogsView.entity.CellAttributes)>
+<span id="el_export_logs_entity">
+<span @Html.Raw(exportLogsView.entity.ViewAttributes)>
+@Html.Raw(exportLogsView.entity.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* exportLogsView.entity.Visible (end) *@
+@if (exportLogsView.key_value.Visible) { // exportLogsView.key_value.Visible (begin)
+    <tr id="r_key_value" @Html.Raw(exportLogsView.key_value.RowAttributes)>
+        <td class="@(exportLogsView.TableLeftColumnClass)"><span id="elh_export_logs_key_value">@Html.Raw(exportLogsView.key_value.Caption)</span></td>
+        <td data-name="key_value" @Html.Raw(exportLogsView.key_value.CellAttributes)>
+<span id="el_export_logs_key_value">
+<span @Html.Raw(exportLogsView.key_value.ViewAttributes)>
+@Html.Raw(exportLogsView.key_value.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* exportLogsView.key_value.Visible (end) *@
+@if (exportLogsView.filename.Visible) { // exportLogsView.filename.Visible (begin)
+    <tr id="r_filename" @Html.Raw(exportLogsView.filename.RowAttributes)>
+        <td class="@(exportLogsView.TableLeftColumnClass)"><span id="elh_export_logs_filename">@Html.Raw(exportLogsView.filename.Caption)</span></td>
+        <td data-name="filename" @Html.Raw(exportLogsView.filename.CellAttributes)>
+<span id="el_export_logs_filename">
+<span @Html.Raw(exportLogsView.filename.ViewAttributes)>
+@Html.Raw(exportLogsView.filename.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* exportLogsView.filename.Visible (end) *@
+@if (exportLogsView._request.Visible) { // exportLogsView._request.Visible (begin)
+    <tr id="r__request" @Html.Raw(exportLogsView._request.RowAttributes)>
+        <td class="@(exportLogsView.TableLeftColumnClass)"><span id="elh_export_logs__request">@Html.Raw(exportLogsView._request.Caption)</span></td>
+        <td data-name="_request" @Html.Raw(exportLogsView._request.CellAttributes)>
+<span id="el_export_logs__request">
+<span @Html.Raw(exportLogsView._request.ViewAttributes)>
+@Html.Raw(exportLogsView._request.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* exportLogsView._request.Visible (end) *@
+</table>
+@{ exportLogsView.CloseRecordset(); }
+</form>
+@if (!exportLogsView.IsModal) {
+if (!exportLogsView.IsExport()) {
+<div><!-- DN -->
+@exportLogsView.Pager.Render()
+</div>
+}
+}
+</main>
+@exportLogsView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!exportLogsView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

@@ -1,0 +1,163 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (permissions2Edit.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!permissions2Edit.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@permissions2Edit.ShowPageHeader()
+@permissions2Edit.ShowMessages()
+<main class="edit">
+@if (!permissions2Edit.IsModal) {
+@permissions2Edit.Pager.Render()
+}
+<form name="fpermissions2edit" id="fpermissions2edit" class="@(permissions2Edit.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+<script>
+var currentTable = @Html.Raw(ConvertToJson(permissions2Edit.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { permissions2: currentTable } });
+var currentPageID = ew.PAGE_ID = "edit";
+var currentForm;
+var fpermissions2edit;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fpermissions2edit")
+        .setPageId("edit")
+
+        // Add fields
+        .setFields([
+
+            ["entity", [fields.entity.visible && fields.entity.required ? ew.Validators.required(fields.entity.caption) : null], fields.entity.isInvalid],
+            ["role_id", [fields.role_id.visible && fields.role_id.required ? ew.Validators.required(fields.role_id.caption) : null, ew.Validators.integer], fields.role_id.isInvalid],
+            ["permission", [fields.permission.visible && fields.permission.required ? ew.Validators.required(fields.permission.caption) : null, ew.Validators.integer], fields.permission.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@ConvertToInt(permissions2Edit.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(permissions2Edit.OldKeyName)" value="@Html.Raw(permissions2Edit.OldKey)">
+<div class="ew-edit-div"><!-- page* -->
+@if (permissions2Edit.entity.Visible) { // permissions2Edit.entity.Visible (begin)
+    <div id="r_entity" @Html.Raw(permissions2Edit.entity.RowAttributes)>
+        <label id="elh_permissions2_entity" for="x_entity" class="@(permissions2Edit.LeftColumnClass)">@Html.Raw(permissions2Edit.entity.Caption)@Html.Raw(permissions2Edit.entity.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(permissions2Edit.RightColumnClass)"><div @Html.Raw(permissions2Edit.entity.CellAttributes)>
+<span id="el_permissions2_entity">
+<input type="@(permissions2Edit.entity.InputTextType)" name="x_entity" id="x_entity" data-table="permissions2" data-field="x_entity" value="@Html.Raw(permissions2Edit.entity.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(permissions2Edit.entity.PlaceHolder))" data-format-pattern="@(permissions2Edit.entity.FormatPattern)"@Html.Raw(permissions2Edit.entity.EditAttributes) aria-describedby="x_entity_help">
+@Html.Raw(permissions2Edit.entity.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(permissions2Edit.entity.GetErrorMessage())</div>
+<input type="hidden" data-table="permissions2" data-field="x_entity" data-hidden="1" data-old name="o_entity" id="o_entity" value="@Html.Raw(HtmlEncode(permissions2Edit.entity.OldValue ?? permissions2Edit.entity.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* permissions2Edit.entity.Visible (end) *@
+@if (permissions2Edit.role_id.Visible) { // permissions2Edit.role_id.Visible (begin)
+    <div id="r_role_id" @Html.Raw(permissions2Edit.role_id.RowAttributes)>
+        <label id="elh_permissions2_role_id" for="x_role_id" class="@(permissions2Edit.LeftColumnClass)">@Html.Raw(permissions2Edit.role_id.Caption)@Html.Raw(permissions2Edit.role_id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(permissions2Edit.RightColumnClass)"><div @Html.Raw(permissions2Edit.role_id.CellAttributes)>
+<span id="el_permissions2_role_id">
+<input type="@(permissions2Edit.role_id.InputTextType)" name="x_role_id" id="x_role_id" data-table="permissions2" data-field="x_role_id" value="@Html.Raw(permissions2Edit.role_id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(permissions2Edit.role_id.PlaceHolder))" data-format-pattern="@(permissions2Edit.role_id.FormatPattern)"@Html.Raw(permissions2Edit.role_id.EditAttributes) aria-describedby="x_role_id_help">
+@Html.Raw(permissions2Edit.role_id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(permissions2Edit.role_id.GetErrorMessage())</div>
+<input type="hidden" data-table="permissions2" data-field="x_role_id" data-hidden="1" data-old name="o_role_id" id="o_role_id" value="@Html.Raw(HtmlEncode(permissions2Edit.role_id.OldValue ?? permissions2Edit.role_id.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* permissions2Edit.role_id.Visible (end) *@
+@if (permissions2Edit.permission.Visible) { // permissions2Edit.permission.Visible (begin)
+    <div id="r_permission" @Html.Raw(permissions2Edit.permission.RowAttributes)>
+        <label id="elh_permissions2_permission" for="x_permission" class="@(permissions2Edit.LeftColumnClass)">@Html.Raw(permissions2Edit.permission.Caption)@Html.Raw(permissions2Edit.permission.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(permissions2Edit.RightColumnClass)"><div @Html.Raw(permissions2Edit.permission.CellAttributes)>
+<span id="el_permissions2_permission">
+<input type="@(permissions2Edit.permission.InputTextType)" name="x_permission" id="x_permission" data-table="permissions2" data-field="x_permission" value="@Html.Raw(permissions2Edit.permission.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(permissions2Edit.permission.PlaceHolder))" data-format-pattern="@(permissions2Edit.permission.FormatPattern)"@Html.Raw(permissions2Edit.permission.EditAttributes) aria-describedby="x_permission_help">
+@Html.Raw(permissions2Edit.permission.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(permissions2Edit.permission.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* permissions2Edit.permission.Visible (end) *@
+</div><!-- /page* -->
+@{ permissions2Edit.CloseRecordset(); }
+@Html.Raw(permissions2Edit.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(permissions2Edit.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fpermissions2edit">@Html.Raw(Language.Phrase("SaveBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fpermissions2edit" data-href="@AppPath(permissions2Edit.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(permissions2Edit.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@if (!permissions2Edit.IsModal) {
+<div><!-- DN -->
+@permissions2Edit.Pager.Render()
+</div>
+}
+</main>
+@permissions2Edit.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("permissions2");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

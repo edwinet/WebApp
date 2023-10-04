@@ -1,0 +1,280 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (permissions2List.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!permissions2List.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!permissions2List.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(permissions2List.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { permissions2: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(permissions2List.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(permissions2List.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(permissions2List.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(permissions2List.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!permissions2List.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (permissions2List.TotalRecords > 0 && permissions2List.ExportOptions.Visible) {
+    permissions2List.ExportOptions.Render("body");
+}
+@if (permissions2List.ImportOptions.Visible) {
+    permissions2List.ImportOptions.Render("body");
+}
+@if (permissions2List.SearchOptions.Visible) {
+    permissions2List.SearchOptions.Render("body");
+}
+@if (permissions2List.FilterOptions.Visible) {
+    permissions2List.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!permissions2List.IsModal) {
+<form name="fpermissions2srch" id="fpermissions2srch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fpermissions2srch_search_panel" class="mb-2 mb-sm-0 @(permissions2List.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(permissions2List.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { permissions2: currentTable } });
+var currentForm;
+var fpermissions2srch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fpermissions2srch")
+        .setPageId("list")
+@if (permissions2List.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await permissions2List.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!permissions2List.IsExport() && Empty(permissions2List.CurrentAction) && permissions2List.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(permissions2List.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(permissions2List.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(permissions2List.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(permissions2List.BasicSearch.SessionType == "" ? " active" : "")" form="fpermissions2srch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(permissions2List.BasicSearch.SessionType == "=" ? " active" : "")" form="fpermissions2srch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(permissions2List.BasicSearch.SessionType == "AND" ? " active" : "")" form="fpermissions2srch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(permissions2List.BasicSearch.SessionType == "OR" ? " active" : "")" form="fpermissions2srch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@permissions2List.ShowPageHeader()
+@permissions2List.ShowMessages()
+<main class="list @(permissions2List.TotalRecords == 0 && !permissions2List.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (permissions2List.TotalRecords > 0 || !Empty(permissions2List.CurrentAction)) {
+<div class="card ew-card ew-grid@(permissions2List.IsAddOrEdit ? " ew-grid-add-edit" : "") @(permissions2List.TableGridClass)">
+@if (!permissions2List.IsExport()) {
+<div class="card-header ew-grid-upper-panel">
+@if (!permissions2List.IsGridAdd && !(permissions2List.IsGridEdit && permissions2List.ModalGridEdit) && !permissions2List.IsMultiEdit) {
+@Html.Raw(permissions2List.Pager.Render())
+}
+<div class="ew-list-other-options">
+@permissions2List.OtherOptions.RenderBody()
+</div>
+</div>
+}
+<form name="@(permissions2List.FormName)" id="@(permissions2List.FormName)" class="ew-form ew-list-form" action="@AppPath(permissions2List.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (permissions2List.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_permissions2" class="card-body ew-grid-middle-panel @(permissions2List.TableContainerClass)" style="@(permissions2List.TableContainerStyle)">
+@if (permissions2List.TotalRecords > 0 || permissions2List.IsGridEdit || permissions2List.IsMultiEdit) {
+<table id="tbl_permissions2list" class="@(permissions2List.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    permissions2List.RowType = RowType.Header;
+
+    // Render list options
+    await permissions2List.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@permissions2List.ListOptions.RenderHeader("left")
+@if (permissions2List.entity.Visible) { // permissions2List.entity.Visible (begin)
+        <th data-name="entity" class="@(permissions2List.entity.HeaderCellClass)"><div id="elh_permissions2_entity" class="permissions2_entity">@Html.Raw(permissions2List.RenderFieldHeader(permissions2List.entity))</div></th>
+} @* permissions2List.entity.Visible (end) *@
+@if (permissions2List.role_id.Visible) { // permissions2List.role_id.Visible (begin)
+        <th data-name="role_id" class="@(permissions2List.role_id.HeaderCellClass)"><div id="elh_permissions2_role_id" class="permissions2_role_id">@Html.Raw(permissions2List.RenderFieldHeader(permissions2List.role_id))</div></th>
+} @* permissions2List.role_id.Visible (end) *@
+@if (permissions2List.permission.Visible) { // permissions2List.permission.Visible (begin)
+        <th data-name="permission" class="@(permissions2List.permission.HeaderCellClass)"><div id="elh_permissions2_permission" class="permissions2_permission">@Html.Raw(permissions2List.RenderFieldHeader(permissions2List.permission))</div></th>
+} @* permissions2List.permission.Visible (end) *@
+@* Render list options (header, right) *@
+@permissions2List.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(permissions2List.PageNumber)">
+@{
+    await permissions2List.SetupGrid();
+    bool eof = permissions2List.Recordset == null; // DN
+}
+@while (permissions2List.RecordCount < permissions2List.StopRecord || SameString(permissions2List.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(permissions2List.RowIndex, "$rowindex$") &&
+        (!permissions2List.IsGridAdd || permissions2List.CurrentMode == "copy") &&
+        (!((permissions2List.IsCopy || permissions2List.IsAdd) && permissions2List.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await permissions2List.Recordset.ReadAsync();
+    permissions2List.RecordCount++;
+    if (permissions2List.RecordCount >= permissions2List.StartRecord) {
+        await permissions2List.SetupRow();
+    <tr @Html.Raw(permissions2List.RowAttributes)>
+    @* Render list options (body, left) *@
+    @permissions2List.ListOptions.RenderBody("left", permissions2List.RowCount)
+    @if (permissions2List.entity.Visible) { // permissions2List.entity.Visible (begin)
+        <td data-name="entity" @Html.Raw(permissions2List.entity.CellAttributes)>
+<span id="el@(permissions2List.RowIndex == "$rowindex$" ? "$rowindex$" : permissions2List.RowCount)_permissions2_entity" class="el_permissions2_entity">
+<span @Html.Raw(permissions2List.entity.ViewAttributes)>
+@Html.Raw(permissions2List.entity.GetViewValue())</span>
+</span>
+</td>
+    } @* permissions2List.entity.Visible (end) *@
+    @if (permissions2List.role_id.Visible) { // permissions2List.role_id.Visible (begin)
+        <td data-name="role_id" @Html.Raw(permissions2List.role_id.CellAttributes)>
+<span id="el@(permissions2List.RowIndex == "$rowindex$" ? "$rowindex$" : permissions2List.RowCount)_permissions2_role_id" class="el_permissions2_role_id">
+<span @Html.Raw(permissions2List.role_id.ViewAttributes)>
+@Html.Raw(permissions2List.role_id.GetViewValue())</span>
+</span>
+</td>
+    } @* permissions2List.role_id.Visible (end) *@
+    @if (permissions2List.permission.Visible) { // permissions2List.permission.Visible (begin)
+        <td data-name="permission" @Html.Raw(permissions2List.permission.CellAttributes)>
+<span id="el@(permissions2List.RowIndex == "$rowindex$" ? "$rowindex$" : permissions2List.RowCount)_permissions2_permission" class="el_permissions2_permission">
+<span @Html.Raw(permissions2List.permission.ViewAttributes)>
+@Html.Raw(permissions2List.permission.GetViewValue())</span>
+</span>
+</td>
+    } @* permissions2List.permission.Visible (end) *@
+    @* Render list options (body, right) *@
+    @permissions2List.ListOptions.RenderBody("right", permissions2List.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(permissions2List.RowIndex, "$rowindex$"))
+        permissions2List.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((permissions2List.IsCopy || permissions2List.IsAdd) && permissions2List.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        permissions2List.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(permissions2List.CurrentAction) && !permissions2List.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ permissions2List.CloseRecordset(); }
+@if (!permissions2List.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!permissions2List.IsGridAdd && !(permissions2List.IsGridEdit && permissions2List.ModalGridEdit) && !permissions2List.IsMultiEdit) {
+@Html.Raw(permissions2List.Pager.Render())
+}
+<div class="ew-list-other-options">
+@permissions2List.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@permissions2List.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@permissions2List.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!permissions2List.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("permissions2");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

@@ -1,0 +1,489 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (usersSearch.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!usersSearch.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(usersSearch.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { users: currentTable } });
+var currentPageID = ew.PAGE_ID = "search";
+var currentForm;
+var fuserssearch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fuserssearch")
+        .setPageId("search")
+@if (usersSearch.IsModal && usersSearch.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Add fields
+        .setFields([
+
+            ["id", [ew.Validators.integer], fields.id.isInvalid],
+            ["first_name", [], fields.first_name.isInvalid],
+            ["last_name", [], fields.last_name.isInvalid],
+            ["_email", [], fields._email.isInvalid],
+            ["_username", [], fields._username.isInvalid],
+            ["mobile", [ew.Validators.phone], fields.mobile.isInvalid],
+            ["role_id", [], fields.role_id.isInvalid],
+            ["created_at", [ew.Validators.datetime(fields.created_at.clientFormatPattern)], fields.created_at.isInvalid],
+            ["y_created_at", [ew.Validators.between], false],
+            ["updated_at", [ew.Validators.datetime(fields.updated_at.clientFormatPattern)], fields.updated_at.isInvalid],
+            ["y_updated_at", [ew.Validators.between], false]
+        ])
+        // Validate form
+        .setValidate(
+            async function () {
+                if (!this.validateRequired)
+                    return true; // Ignore validation
+                let fobj = this.getForm();
+
+                // Validate fields
+                if (!this.validateFields())
+                    return false;
+
+                // Call Form_CustomValidate event
+                if (!(await this.customValidate?.(fobj) ?? true)) {
+                    this.focus();
+                    return false;
+                }
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+            "role_id": @Html.Raw(usersSearch.role_id.ToClientList(usersSearch)),
+        })
+        .build();
+    window[form.id] = form;
+@if (usersSearch.IsModal) {
+    <text>currentAdvancedSearchForm = form;</text>
+} else {
+    <text>currentForm = form;</text>
+}
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@usersSearch.ShowPageHeader()
+@usersSearch.ShowMessages()
+<form name="fuserssearch" id="fuserssearch" class="@(usersSearch.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="search">
+@if (usersSearch.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div class="ew-search-div"><!-- page* -->
+@if (usersSearch.id.Visible) { // usersSearch.id.Visible (begin)
+    <div id="r_id" class="row" @Html.Raw(usersSearch.id.RowAttributes)>
+        <label for="x_id" class="@(usersSearch.LeftColumnClass)"><span id="elh_users_id">@Html.Raw(usersSearch.id.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("="))
+<input type="hidden" name="z_id" id="z_id" value="=">
+</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch.id.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_users_id" class="ew-search-field ew-search-field-single">
+<input type="@(usersSearch.id.InputTextType)" name="x_id" id="x_id" data-table="users" data-field="x_id" value="@Html.Raw(usersSearch.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(usersSearch.id.PlaceHolder))" data-format-pattern="@(usersSearch.id.FormatPattern)"@Html.Raw(usersSearch.id.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch.id.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch.id.Visible (end) *@
+@if (usersSearch.first_name.Visible) { // usersSearch.first_name.Visible (begin)
+    <div id="r_first_name" class="row" @Html.Raw(usersSearch.first_name.RowAttributes)>
+        <label for="x_first_name" class="@(usersSearch.LeftColumnClass)"><span id="elh_users_first_name">@Html.Raw(usersSearch.first_name.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_first_name" id="z_first_name" value="LIKE">
+</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch.first_name.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_users_first_name" class="ew-search-field ew-search-field-single">
+<input type="@(usersSearch.first_name.InputTextType)" name="x_first_name" id="x_first_name" data-table="users" data-field="x_first_name" value="@Html.Raw(usersSearch.first_name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersSearch.first_name.PlaceHolder))" data-format-pattern="@(usersSearch.first_name.FormatPattern)"@Html.Raw(usersSearch.first_name.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch.first_name.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch.first_name.Visible (end) *@
+@if (usersSearch.last_name.Visible) { // usersSearch.last_name.Visible (begin)
+    <div id="r_last_name" class="row" @Html.Raw(usersSearch.last_name.RowAttributes)>
+        <label for="x_last_name" class="@(usersSearch.LeftColumnClass)"><span id="elh_users_last_name">@Html.Raw(usersSearch.last_name.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_last_name" id="z_last_name" value="LIKE">
+</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch.last_name.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_users_last_name" class="ew-search-field ew-search-field-single">
+<input type="@(usersSearch.last_name.InputTextType)" name="x_last_name" id="x_last_name" data-table="users" data-field="x_last_name" value="@Html.Raw(usersSearch.last_name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersSearch.last_name.PlaceHolder))" data-format-pattern="@(usersSearch.last_name.FormatPattern)"@Html.Raw(usersSearch.last_name.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch.last_name.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch.last_name.Visible (end) *@
+@if (usersSearch._email.Visible) { // usersSearch._email.Visible (begin)
+    <div id="r__email" class="row" @Html.Raw(usersSearch._email.RowAttributes)>
+        <label for="x__email" class="@(usersSearch.LeftColumnClass)"><span id="elh_users__email">@Html.Raw(usersSearch._email.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z__email" id="z__email" value="LIKE">
+</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch._email.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_users__email" class="ew-search-field ew-search-field-single">
+<input type="@(usersSearch._email.InputTextType)" name="x__email" id="x__email" data-table="users" data-field="x__email" value="@Html.Raw(usersSearch._email.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersSearch._email.PlaceHolder))" data-format-pattern="@(usersSearch._email.FormatPattern)"@Html.Raw(usersSearch._email.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch._email.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch._email.Visible (end) *@
+@if (usersSearch._username.Visible) { // usersSearch._username.Visible (begin)
+    <div id="r__username" class="row" @Html.Raw(usersSearch._username.RowAttributes)>
+        <label for="x__username" class="@(usersSearch.LeftColumnClass)"><span id="elh_users__username">@Html.Raw(usersSearch._username.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("="))
+<input type="hidden" name="z__username" id="z__username" value="=">
+</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch._username.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_users__username" class="ew-search-field ew-search-field-single">
+<input type="@(usersSearch._username.InputTextType)" name="x__username" id="x__username" data-table="users" data-field="x__username" value="@Html.Raw(usersSearch._username.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersSearch._username.PlaceHolder))" data-format-pattern="@(usersSearch._username.FormatPattern)"@Html.Raw(usersSearch._username.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch._username.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch._username.Visible (end) *@
+@if (usersSearch.mobile.Visible) { // usersSearch.mobile.Visible (begin)
+    <div id="r_mobile" class="row" @Html.Raw(usersSearch.mobile.RowAttributes)>
+        <label for="x_mobile" class="@(usersSearch.LeftColumnClass)"><span id="elh_users_mobile">@Html.Raw(usersSearch.mobile.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_mobile" id="z_mobile" value="LIKE">
+</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch.mobile.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_users_mobile" class="ew-search-field ew-search-field-single">
+<input type="@(usersSearch.mobile.InputTextType)" name="x_mobile" id="x_mobile" data-table="users" data-field="x_mobile" value="@Html.Raw(usersSearch.mobile.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(usersSearch.mobile.PlaceHolder))" data-format-pattern="@(usersSearch.mobile.FormatPattern)"@Html.Raw(usersSearch.mobile.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch.mobile.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch.mobile.Visible (end) *@
+@if (usersSearch.role_id.Visible) { // usersSearch.role_id.Visible (begin)
+    <div id="r_role_id" class="row" @Html.Raw(usersSearch.role_id.RowAttributes)>
+        <label for="x_role_id" class="@(usersSearch.LeftColumnClass)"><span id="elh_users_role_id">@Html.Raw(usersSearch.role_id.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("="))
+<input type="hidden" name="z_role_id" id="z_role_id" value="=">
+</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch.role_id.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_users_role_id" class="ew-search-field ew-search-field-single">
+@if (!Security.IsAdmin && Security.IsLoggedIn) { // Non system admin
+<span class="form-control-plaintext">@Html.Raw(usersSearch.role_id.DisplayValue(usersSearch.role_id.EditValue))</span>
+} else {
+    <select
+        id="x_role_id"
+        name="x_role_id"
+        class="form-select ew-select@(usersSearch.role_id.IsInvalidClass)"
+        data-select2-id="fuserssearch_x_role_id"
+        data-table="users"
+        data-field="x_role_id"
+        data-value-separator="@(usersSearch.role_id.DisplayValueSeparatorAttribute)"
+        data-placeholder="@(HtmlEncode(usersSearch.role_id.PlaceHolder))"
+        @Html.Raw(usersSearch.role_id.EditAttributes)>
+        @(usersSearch.role_id.SelectOptionListHtml("x_role_id"))
+    </select>
+    <div class="invalid-feedback">@Html.Raw(usersSearch.role_id.GetErrorMessage(false))</div>
+@Html.Raw(usersSearch.role_id.Lookup.GetParamTag(usersSearch, "p_x_role_id"))
+<script>
+loadjs.ready("fuserssearch", function() {
+    var options = { name: "x_role_id", selectId: "fuserssearch_x_role_id" },
+        el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+    if (!el)
+        return;
+    options.closeOnSelect = !options.multiple;
+    options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+    if (fuserssearch.lists.role_id?.lookupOptions.length) {
+        options.data = { id: "x_role_id", form: "fuserssearch" };
+    } else {
+        options.ajax = { id: "x_role_id", form: "fuserssearch", limit: ew.LOOKUP_PAGE_SIZE };
+    }
+    options.minimumResultsForSearch = Infinity;
+    options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.users.fields.role_id.selectOptions);
+    ew.createSelect(options);
+});
+</script>
+}
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch.role_id.Visible (end) *@
+@if (usersSearch.created_at.Visible) { // usersSearch.created_at.Visible (begin)
+    <div id="r_created_at" class="row" @Html.Raw(usersSearch.created_at.RowAttributes)>
+        <label for="x_created_at" class="@(usersSearch.LeftColumnClass)"><span id="elh_users_created_at">@Html.Raw(usersSearch.created_at.Caption)</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch.created_at.CellAttributes)>
+                <div class="d-flex align-items-start">
+                    <span class="ew-search-operator">
+<select name="z_created_at" id="z_created_at" class="form-select ew-operator-select" data-ew-action="search-operator">
+@foreach (string opr in usersSearch.created_at.SearchOperators) {
+<option value="@opr" selected="@SameText(usersSearch.created_at.AdvancedSearch.SearchOperator, opr)">@Html.Raw(Language.Phrase(opr == "=" ? "EQUAL" : opr))</option>
+}
+</select>
+</span>
+                <span id="el_users_created_at" class="ew-search-field">
+<input type="@(usersSearch.created_at.InputTextType)" name="x_created_at" id="x_created_at" data-table="users" data-field="x_created_at" value="@Html.Raw(usersSearch.created_at.EditValue)" placeholder="@Html.Raw(HtmlEncode(usersSearch.created_at.PlaceHolder))" data-format-pattern="@(usersSearch.created_at.FormatPattern)"@Html.Raw(usersSearch.created_at.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch.created_at.GetErrorMessage(false))</div>
+@if (!usersSearch.created_at.ReadOnly && !usersSearch.created_at.Disabled && !usersSearch.created_at.EditAttrs.Is("readonly") && !usersSearch.created_at.EditAttrs.Is("disabled")) {
+<script>
+loadjs.ready(["fuserssearch", "datetimepicker"], function () {
+    let format = "@Html.Raw(DateFormat(11))", // DN
+        options = {
+                localization: {
+                    locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                    hourCycle: format.match(/H/) ? "h24" : "h12",
+                    format,
+                    ...ew.language.phrase("datetimepicker")
+                },
+                display: {
+                    icons: {
+                        previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                        next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                    },
+                    components: {
+                        hours: !!format.match(/h/i),
+                        minutes: !!format.match(/m/),
+                        seconds: !!format.match(/s/i)
+                    },
+                    theme: ew.isDark() ? "dark" : "auto"
+                }
+            };
+    ew.createDateTimePicker("fuserssearch", "x_created_at", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+});
+</script>
+}
+</span>
+                    <span class="ew-search-and d-none"><label>@Html.Raw(Language.Phrase("AND"))</label></span>
+                    <span id="el2_users_created_at" class="ew-search-field2 d-none">
+<input type="@(usersSearch.created_at.InputTextType)" name="y_created_at" id="y_created_at" data-table="users" data-field="x_created_at" value="@Html.Raw(usersSearch.created_at.EditValue2)" placeholder="@Html.Raw(HtmlEncode(usersSearch.created_at.PlaceHolder))" data-format-pattern="@(usersSearch.created_at.FormatPattern)"@Html.Raw(usersSearch.created_at.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch.created_at.GetErrorMessage(false))</div>
+@if (!usersSearch.created_at.ReadOnly && !usersSearch.created_at.Disabled && !usersSearch.created_at.EditAttrs.Is("readonly") && !usersSearch.created_at.EditAttrs.Is("disabled")) {
+<script>
+loadjs.ready(["fuserssearch", "datetimepicker"], function () {
+    let format = "@Html.Raw(DateFormat(11))", // DN
+        options = {
+                localization: {
+                    locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                    hourCycle: format.match(/H/) ? "h24" : "h12",
+                    format,
+                    ...ew.language.phrase("datetimepicker")
+                },
+                display: {
+                    icons: {
+                        previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                        next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                    },
+                    components: {
+                        hours: !!format.match(/h/i),
+                        minutes: !!format.match(/m/),
+                        seconds: !!format.match(/s/i)
+                    },
+                    theme: ew.isDark() ? "dark" : "auto"
+                }
+            };
+    ew.createDateTimePicker("fuserssearch", "y_created_at", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+});
+</script>
+}
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch.created_at.Visible (end) *@
+@if (usersSearch.updated_at.Visible) { // usersSearch.updated_at.Visible (begin)
+    <div id="r_updated_at" class="row" @Html.Raw(usersSearch.updated_at.RowAttributes)>
+        <label for="x_updated_at" class="@(usersSearch.LeftColumnClass)"><span id="elh_users_updated_at">@Html.Raw(usersSearch.updated_at.Caption)</span>
+        </label>
+        <div class="@(usersSearch.RightColumnClass)">
+            <div @Html.Raw(usersSearch.updated_at.CellAttributes)>
+                <div class="d-flex align-items-start">
+                    <span class="ew-search-operator">
+<select name="z_updated_at" id="z_updated_at" class="form-select ew-operator-select" data-ew-action="search-operator">
+@foreach (string opr in usersSearch.updated_at.SearchOperators) {
+<option value="@opr" selected="@SameText(usersSearch.updated_at.AdvancedSearch.SearchOperator, opr)">@Html.Raw(Language.Phrase(opr == "=" ? "EQUAL" : opr))</option>
+}
+</select>
+</span>
+                <span id="el_users_updated_at" class="ew-search-field">
+<input type="@(usersSearch.updated_at.InputTextType)" name="x_updated_at" id="x_updated_at" data-table="users" data-field="x_updated_at" value="@Html.Raw(usersSearch.updated_at.EditValue)" placeholder="@Html.Raw(HtmlEncode(usersSearch.updated_at.PlaceHolder))" data-format-pattern="@(usersSearch.updated_at.FormatPattern)"@Html.Raw(usersSearch.updated_at.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch.updated_at.GetErrorMessage(false))</div>
+@if (!usersSearch.updated_at.ReadOnly && !usersSearch.updated_at.Disabled && !usersSearch.updated_at.EditAttrs.Is("readonly") && !usersSearch.updated_at.EditAttrs.Is("disabled")) {
+<script>
+loadjs.ready(["fuserssearch", "datetimepicker"], function () {
+    let format = "@Html.Raw(DateFormat(11))", // DN
+        options = {
+                localization: {
+                    locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                    hourCycle: format.match(/H/) ? "h24" : "h12",
+                    format,
+                    ...ew.language.phrase("datetimepicker")
+                },
+                display: {
+                    icons: {
+                        previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                        next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                    },
+                    components: {
+                        hours: !!format.match(/h/i),
+                        minutes: !!format.match(/m/),
+                        seconds: !!format.match(/s/i)
+                    },
+                    theme: ew.isDark() ? "dark" : "auto"
+                }
+            };
+    ew.createDateTimePicker("fuserssearch", "x_updated_at", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+});
+</script>
+}
+</span>
+                    <span class="ew-search-and d-none"><label>@Html.Raw(Language.Phrase("AND"))</label></span>
+                    <span id="el2_users_updated_at" class="ew-search-field2 d-none">
+<input type="@(usersSearch.updated_at.InputTextType)" name="y_updated_at" id="y_updated_at" data-table="users" data-field="x_updated_at" value="@Html.Raw(usersSearch.updated_at.EditValue2)" placeholder="@Html.Raw(HtmlEncode(usersSearch.updated_at.PlaceHolder))" data-format-pattern="@(usersSearch.updated_at.FormatPattern)"@Html.Raw(usersSearch.updated_at.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(usersSearch.updated_at.GetErrorMessage(false))</div>
+@if (!usersSearch.updated_at.ReadOnly && !usersSearch.updated_at.Disabled && !usersSearch.updated_at.EditAttrs.Is("readonly") && !usersSearch.updated_at.EditAttrs.Is("disabled")) {
+<script>
+loadjs.ready(["fuserssearch", "datetimepicker"], function () {
+    let format = "@Html.Raw(DateFormat(11))", // DN
+        options = {
+                localization: {
+                    locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                    hourCycle: format.match(/H/) ? "h24" : "h12",
+                    format,
+                    ...ew.language.phrase("datetimepicker")
+                },
+                display: {
+                    icons: {
+                        previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                        next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                    },
+                    components: {
+                        hours: !!format.match(/h/i),
+                        minutes: !!format.match(/m/),
+                        seconds: !!format.match(/s/i)
+                    },
+                    theme: ew.isDark() ? "dark" : "auto"
+                }
+            };
+    ew.createDateTimePicker("fuserssearch", "y_updated_at", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+});
+</script>
+}
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* usersSearch.updated_at.Visible (end) *@
+</div><!-- /page* -->
+@Html.Raw(usersSearch.IsModal ? Html.Raw("<template class=\"ew-modal-buttons\">") : Html.Raw("<div class=\"row ew-buttons\">"))<!-- buttons .row -->
+    <div class="@(usersSearch.OffsetColumnClass)"><!-- buttons offset -->
+        <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fuserssearch">@Html.Raw(Language.Phrase("Search"))</button>
+@if (usersSearch.IsModal) {
+        <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fuserssearch">@Html.Raw(Language.Phrase("Cancel"))</button>
+} else {
+        <button class="btn btn-default ew-btn" name="btn-reset" id="btn-reset" type="button" form="fuserssearch" data-ew-action="reload">@Html.Raw(Language.Phrase("Reset"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(usersSearch.IsModal ? Html.Raw("</template>") : Html.Raw("</div>"))<!-- /buttons .row -->
+</form>
+@usersSearch.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("users");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

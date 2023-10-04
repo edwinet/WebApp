@@ -1,0 +1,186 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (usersDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!usersDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(usersDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { users: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var fusersdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fusersdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@usersDelete.ShowPageHeader()
+@usersDelete.ShowMessages()
+<form name="fusersdelete" id="fusersdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in usersDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(usersDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(usersDelete.TableContainerClass)" style="@(usersDelete.TableContainerStyle)">
+<table class="@(usersDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (usersDelete.id.Visible) { // usersDelete.id.Visible (begin)
+        <th class="@Html.Raw(usersDelete.id.HeaderCellClass)"><span id="elh_users_id" class="users_id">@Html.Raw(usersDelete.id.Caption)</span></th>
+} @* usersDelete.id.Visible (end) *@
+@if (usersDelete.first_name.Visible) { // usersDelete.first_name.Visible (begin)
+        <th class="@Html.Raw(usersDelete.first_name.HeaderCellClass)"><span id="elh_users_first_name" class="users_first_name">@Html.Raw(usersDelete.first_name.Caption)</span></th>
+} @* usersDelete.first_name.Visible (end) *@
+@if (usersDelete.last_name.Visible) { // usersDelete.last_name.Visible (begin)
+        <th class="@Html.Raw(usersDelete.last_name.HeaderCellClass)"><span id="elh_users_last_name" class="users_last_name">@Html.Raw(usersDelete.last_name.Caption)</span></th>
+} @* usersDelete.last_name.Visible (end) *@
+@if (usersDelete._email.Visible) { // usersDelete._email.Visible (begin)
+        <th class="@Html.Raw(usersDelete._email.HeaderCellClass)"><span id="elh_users__email" class="users__email">@Html.Raw(usersDelete._email.Caption)</span></th>
+} @* usersDelete._email.Visible (end) *@
+@if (usersDelete._username.Visible) { // usersDelete._username.Visible (begin)
+        <th class="@Html.Raw(usersDelete._username.HeaderCellClass)"><span id="elh_users__username" class="users__username">@Html.Raw(usersDelete._username.Caption)</span></th>
+} @* usersDelete._username.Visible (end) *@
+@if (usersDelete.mobile.Visible) { // usersDelete.mobile.Visible (begin)
+        <th class="@Html.Raw(usersDelete.mobile.HeaderCellClass)"><span id="elh_users_mobile" class="users_mobile">@Html.Raw(usersDelete.mobile.Caption)</span></th>
+} @* usersDelete.mobile.Visible (end) *@
+@if (usersDelete.photo.Visible) { // usersDelete.photo.Visible (begin)
+        <th class="@Html.Raw(usersDelete.photo.HeaderCellClass)"><span id="elh_users_photo" class="users_photo">@Html.Raw(usersDelete.photo.Caption)</span></th>
+} @* usersDelete.photo.Visible (end) *@
+@if (usersDelete.created_at.Visible) { // usersDelete.created_at.Visible (begin)
+        <th class="@Html.Raw(usersDelete.created_at.HeaderCellClass)"><span id="elh_users_created_at" class="users_created_at">@Html.Raw(usersDelete.created_at.Caption)</span></th>
+} @* usersDelete.created_at.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ usersDelete.RecordCount = 0; }
+@while (usersDelete.Recordset != null && await usersDelete.Recordset.ReadAsync()) { // DN
+    usersDelete.RecordCount++;
+    usersDelete.RowCount++;
+
+    // Set row properties
+    usersDelete.ResetAttributes();
+    usersDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await usersDelete.LoadRowValues(usersDelete.Recordset);
+
+    // Render row
+    await usersDelete.RenderRow();
+    <tr @Html.Raw(usersDelete.RowAttributes)>
+@if (usersDelete.id.Visible) { // usersDelete.id.Visible (begin)
+        <td @Html.Raw(usersDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(usersDelete.id.ViewAttributes)>
+@Html.Raw(usersDelete.id.GetViewValue())</span>
+</span></td>
+} @* usersDelete.id.Visible (end) *@
+@if (usersDelete.first_name.Visible) { // usersDelete.first_name.Visible (begin)
+        <td @Html.Raw(usersDelete.first_name.CellAttributes)>
+<span id="">
+<span @Html.Raw(usersDelete.first_name.ViewAttributes)>
+@Html.Raw(usersDelete.first_name.GetViewValue())</span>
+</span></td>
+} @* usersDelete.first_name.Visible (end) *@
+@if (usersDelete.last_name.Visible) { // usersDelete.last_name.Visible (begin)
+        <td @Html.Raw(usersDelete.last_name.CellAttributes)>
+<span id="">
+<span @Html.Raw(usersDelete.last_name.ViewAttributes)>
+@Html.Raw(usersDelete.last_name.GetViewValue())</span>
+</span></td>
+} @* usersDelete.last_name.Visible (end) *@
+@if (usersDelete._email.Visible) { // usersDelete._email.Visible (begin)
+        <td @Html.Raw(usersDelete._email.CellAttributes)>
+<span id="">
+<span @Html.Raw(usersDelete._email.ViewAttributes)>
+@Html.Raw(usersDelete._email.GetViewValue())</span>
+</span></td>
+} @* usersDelete._email.Visible (end) *@
+@if (usersDelete._username.Visible) { // usersDelete._username.Visible (begin)
+        <td @Html.Raw(usersDelete._username.CellAttributes)>
+<span id="">
+<span @Html.Raw(usersDelete._username.ViewAttributes)>
+@Html.Raw(usersDelete._username.GetViewValue())</span>
+</span></td>
+} @* usersDelete._username.Visible (end) *@
+@if (usersDelete.mobile.Visible) { // usersDelete.mobile.Visible (begin)
+        <td @Html.Raw(usersDelete.mobile.CellAttributes)>
+<span id="">
+<span @Html.Raw(usersDelete.mobile.ViewAttributes)>
+@Html.Raw(usersDelete.mobile.GetViewValue())</span>
+</span></td>
+} @* usersDelete.mobile.Visible (end) *@
+@if (usersDelete.photo.Visible) { // usersDelete.photo.Visible (begin)
+        <td @Html.Raw(usersDelete.photo.CellAttributes)>
+<span id="">
+<span>
+@Html.Raw(await GetFileViewTag((DbField)usersDelete.photo, ConvertToString(usersDelete.photo.GetViewValue()), false))
+</span>
+</span></td>
+} @* usersDelete.photo.Visible (end) *@
+@if (usersDelete.created_at.Visible) { // usersDelete.created_at.Visible (begin)
+        <td @Html.Raw(usersDelete.created_at.CellAttributes)>
+<span id="">
+<span @Html.Raw(usersDelete.created_at.ViewAttributes)>
+@Html.Raw(usersDelete.created_at.GetViewValue())</span>
+</span></td>
+} @* usersDelete.created_at.Visible (end) *@
+    </tr>
+}
+@{ usersDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(usersDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@usersDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

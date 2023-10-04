@@ -1,0 +1,253 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (dishesAdd.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!dishesAdd.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(dishesAdd.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { dishes: currentTable } });
+var currentPageID = ew.PAGE_ID = "add";
+var currentForm;
+var fdishesadd;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fdishesadd")
+        .setPageId("add")
+
+        // Add fields
+        .setFields([
+
+            ["_name", [fields._name.visible && fields._name.required ? ew.Validators.required(fields._name.caption) : null], fields._name.isInvalid],
+            ["description", [fields.description.visible && fields.description.required ? ew.Validators.required(fields.description.caption) : null], fields.description.isInvalid],
+            ["image", [fields.image.visible && fields.image.required ? ew.Validators.fileRequired(fields.image.caption) : null], fields.image.isInvalid],
+            ["price", [fields.price.visible && fields.price.required ? ew.Validators.required(fields.price.caption) : null, ew.Validators.float], fields.price.isInvalid],
+            ["restaurant_id", [fields.restaurant_id.visible && fields.restaurant_id.required ? ew.Validators.required(fields.restaurant_id.caption) : null], fields.restaurant_id.isInvalid],
+            ["created_at", [fields.created_at.visible && fields.created_at.required ? ew.Validators.required(fields.created_at.caption) : null], fields.created_at.isInvalid],
+            ["updated_at", [fields.updated_at.visible && fields.updated_at.required ? ew.Validators.required(fields.updated_at.caption) : null], fields.updated_at.isInvalid],
+            ["created_by", [fields.created_by.visible && fields.created_by.required ? ew.Validators.required(fields.created_by.caption) : null], fields.created_by.isInvalid],
+            ["updated_by", [fields.updated_by.visible && fields.updated_by.required ? ew.Validators.required(fields.updated_by.caption) : null], fields.updated_by.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+            "restaurant_id": @Html.Raw(dishesAdd.restaurant_id.ToClientList(dishesAdd)),
+            "created_by": @Html.Raw(dishesAdd.created_by.ToClientList(dishesAdd)),
+            "updated_by": @Html.Raw(dishesAdd.updated_by.ToClientList(dishesAdd)),
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@dishesAdd.ShowPageHeader()
+@dishesAdd.ShowMessages()
+<form name="fdishesadd" id="fdishesadd" class="@(dishesAdd.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="insert">
+<input type="hidden" name="modal" value="@ConvertToInt(dishesAdd.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(dishesAdd.OldKeyName)" value="@Html.Raw(dishesAdd.OldKey)">
+@if (dishesAdd.CurrentMasterTable == "restaurants") {
+<input type="hidden" name="@Config.TableShowMaster" value="restaurants">
+<input type="hidden" name="fk_id" value="@(HtmlEncode(dishesAdd.restaurant_id.SessionValue))">
+}
+<div class="ew-add-div"><!-- page* -->
+@if (dishesAdd._name.Visible) { // dishesAdd._name.Visible (begin)
+    <div id="r__name" @Html.Raw(dishesAdd._name.RowAttributes)>
+        <label id="elh_dishes__name" for="x__name" class="@(dishesAdd.LeftColumnClass)">@Html.Raw(dishesAdd._name.Caption)@Html.Raw(dishesAdd._name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(dishesAdd.RightColumnClass)"><div @Html.Raw(dishesAdd._name.CellAttributes)>
+<span id="el_dishes__name">
+<input type="@(dishesAdd._name.InputTextType)" name="x__name" id="x__name" data-table="dishes" data-field="x__name" value="@Html.Raw(dishesAdd._name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(dishesAdd._name.PlaceHolder))" data-format-pattern="@(dishesAdd._name.FormatPattern)"@Html.Raw(dishesAdd._name.EditAttributes) aria-describedby="x__name_help">
+@Html.Raw(dishesAdd._name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(dishesAdd._name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* dishesAdd._name.Visible (end) *@
+@if (dishesAdd.description.Visible) { // dishesAdd.description.Visible (begin)
+    <div id="r_description" @Html.Raw(dishesAdd.description.RowAttributes)>
+        <label id="elh_dishes_description" class="@(dishesAdd.LeftColumnClass)">@Html.Raw(dishesAdd.description.Caption)@Html.Raw(dishesAdd.description.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(dishesAdd.RightColumnClass)"><div @Html.Raw(dishesAdd.description.CellAttributes)>
+<span id="el_dishes_description">
+@{ dishesAdd.description.EditAttrs.AppendClass("editor"); }
+<textarea data-table="dishes" data-field="x_description" name="x_description" id="x_description" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(dishesAdd.description.PlaceHolder))"@Html.Raw(dishesAdd.description.EditAttributes) aria-describedby="x_description_help">@(dishesAdd.description.EditValue)</textarea>
+@Html.Raw(dishesAdd.description.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(dishesAdd.description.GetErrorMessage())</div>
+<script>
+loadjs.ready(["fdishesadd", "editor"], function() {
+    ew.createEditor("fdishesadd", "x_description", 35, 4, @(dishesAdd.description.ReadOnly || false ? "true" : "false"));
+});
+</script>
+</span>
+</div></div>
+    </div>
+} @* dishesAdd.description.Visible (end) *@
+@if (dishesAdd.image.Visible) { // dishesAdd.image.Visible (begin)
+    <div id="r_image" @Html.Raw(dishesAdd.image.RowAttributes)>
+        <label id="elh_dishes_image" class="@(dishesAdd.LeftColumnClass)">@Html.Raw(dishesAdd.image.Caption)@Html.Raw(dishesAdd.image.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(dishesAdd.RightColumnClass)"><div @Html.Raw(dishesAdd.image.CellAttributes)>
+<span id="el_dishes_image">
+<div id="fd_x_image" class="fileinput-button ew-file-drop-zone">
+    <input
+        type="file"
+        id="x_image"
+        name="x_image"
+        class="form-control ew-file-input"
+        title="@(dishesAdd.image.Title)"
+        lang="@(CurrentLanguageID)"
+        data-table="dishes"
+        data-field="x_image"
+        data-size="255"
+        data-accept-file-types="@(dishesAdd.image.AcceptFileTypes)"
+        data-max-file-size="@(dishesAdd.image.UploadMaxFileSize)"
+        data-max-number-of-files="null"
+        data-disable-image-crop="@(dishesAdd.image.ImageCropper ? 0 : 1)"
+        aria-describedby="x_image_help"
+        @Html.Raw((dishesAdd.image.ReadOnly || dishesAdd.image.Disabled) ? " disabled" : "")
+        @Html.Raw(dishesAdd.image.EditAttributes)
+    >
+    <div class="text-muted ew-file-text">@Html.Raw(Language.Phrase("ChooseFile"))</div>
+</div>
+@Html.Raw(dishesAdd.image.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(dishesAdd.image.GetErrorMessage())</div>
+<input type="hidden" name="fn_x_image" id= "fn_x_image" value="@(dishesAdd.image.Upload.FileName)">
+<input type="hidden" name="fa_x_image" id= "fa_x_image" value="0">
+<table id="ft_x_image" class="table table-sm float-start ew-upload-table"><tbody class="files"></tbody></table>
+</span>
+</div></div>
+    </div>
+} @* dishesAdd.image.Visible (end) *@
+@if (dishesAdd.price.Visible) { // dishesAdd.price.Visible (begin)
+    <div id="r_price" @Html.Raw(dishesAdd.price.RowAttributes)>
+        <label id="elh_dishes_price" for="x_price" class="@(dishesAdd.LeftColumnClass)">@Html.Raw(dishesAdd.price.Caption)@Html.Raw(dishesAdd.price.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(dishesAdd.RightColumnClass)"><div @Html.Raw(dishesAdd.price.CellAttributes)>
+<span id="el_dishes_price">
+<input type="@(dishesAdd.price.InputTextType)" name="x_price" id="x_price" data-table="dishes" data-field="x_price" value="@Html.Raw(dishesAdd.price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(dishesAdd.price.PlaceHolder))" data-format-pattern="@(dishesAdd.price.FormatPattern)"@Html.Raw(dishesAdd.price.EditAttributes) aria-describedby="x_price_help">
+@Html.Raw(dishesAdd.price.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(dishesAdd.price.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* dishesAdd.price.Visible (end) *@
+@if (dishesAdd.restaurant_id.Visible) { // dishesAdd.restaurant_id.Visible (begin)
+    <div id="r_restaurant_id" @Html.Raw(dishesAdd.restaurant_id.RowAttributes)>
+        <label id="elh_dishes_restaurant_id" for="x_restaurant_id" class="@(dishesAdd.LeftColumnClass)">@Html.Raw(dishesAdd.restaurant_id.Caption)@Html.Raw(dishesAdd.restaurant_id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(dishesAdd.RightColumnClass)"><div @Html.Raw(dishesAdd.restaurant_id.CellAttributes)>
+@if (!Empty(dishesAdd.restaurant_id.SessionValue)) {
+<span @Html.Raw(dishesAdd.restaurant_id.ViewAttributes)>
+<span class="form-control-plaintext">@Html.Raw(dishesAdd.restaurant_id.DisplayValue(dishesAdd.restaurant_id.ViewValue))</span></span>
+<input type="hidden" id="x_restaurant_id" name="x_restaurant_id" value="@(HtmlEncode(dishesAdd.restaurant_id.CurrentValue))" data-hidden="1">
+} else {
+<span id="el_dishes_restaurant_id">
+    <select
+        id="x_restaurant_id"
+        name="x_restaurant_id"
+        class="form-select ew-select@(dishesAdd.restaurant_id.IsInvalidClass)"
+        data-select2-id="fdishesadd_x_restaurant_id"
+        data-table="dishes"
+        data-field="x_restaurant_id"
+        data-value-separator="@(dishesAdd.restaurant_id.DisplayValueSeparatorAttribute)"
+        data-placeholder="@(HtmlEncode(dishesAdd.restaurant_id.PlaceHolder))"
+        @Html.Raw(dishesAdd.restaurant_id.EditAttributes)>
+        @(dishesAdd.restaurant_id.SelectOptionListHtml("x_restaurant_id"))
+    </select>
+    @Html.Raw(dishesAdd.restaurant_id.GetCustomMessage)
+    <div class="invalid-feedback">@Html.Raw(dishesAdd.restaurant_id.GetErrorMessage())</div>
+@Html.Raw(dishesAdd.restaurant_id.Lookup.GetParamTag(dishesAdd, "p_x_restaurant_id"))
+<script>
+loadjs.ready("fdishesadd", function() {
+    var options = { name: "x_restaurant_id", selectId: "fdishesadd_x_restaurant_id" },
+        el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+    if (!el)
+        return;
+    options.closeOnSelect = !options.multiple;
+    options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+    if (fdishesadd.lists.restaurant_id?.lookupOptions.length) {
+        options.data = { id: "x_restaurant_id", form: "fdishesadd" };
+    } else {
+        options.ajax = { id: "x_restaurant_id", form: "fdishesadd", limit: ew.LOOKUP_PAGE_SIZE };
+    }
+    options.minimumResultsForSearch = Infinity;
+    options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.dishes.fields.restaurant_id.selectOptions);
+    ew.createSelect(options);
+});
+</script>
+</span>
+}
+</div></div>
+    </div>
+} @* dishesAdd.restaurant_id.Visible (end) *@
+</div><!-- /page* -->
+@{ dishesAdd.CloseRecordset(); }
+@Html.Raw(dishesAdd.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(dishesAdd.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fdishesadd">@Html.Raw(Language.Phrase("AddBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fdishesadd" data-href="@AppPath(dishesAdd.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(dishesAdd.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@dishesAdd.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("dishes");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

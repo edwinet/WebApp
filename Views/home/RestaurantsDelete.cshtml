@@ -1,0 +1,156 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (restaurantsDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!restaurantsDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(restaurantsDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { restaurants: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var frestaurantsdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("frestaurantsdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@restaurantsDelete.ShowPageHeader()
+@restaurantsDelete.ShowMessages()
+<form name="frestaurantsdelete" id="frestaurantsdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in restaurantsDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(restaurantsDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(restaurantsDelete.TableContainerClass)" style="@(restaurantsDelete.TableContainerStyle)">
+<table class="@(restaurantsDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (restaurantsDelete.id.Visible) { // restaurantsDelete.id.Visible (begin)
+        <th class="@Html.Raw(restaurantsDelete.id.HeaderCellClass)"><span id="elh_restaurants_id" class="restaurants_id">@Html.Raw(restaurantsDelete.id.Caption)</span></th>
+} @* restaurantsDelete.id.Visible (end) *@
+@if (restaurantsDelete._name.Visible) { // restaurantsDelete._name.Visible (begin)
+        <th class="@Html.Raw(restaurantsDelete._name.HeaderCellClass)"><span id="elh_restaurants__name" class="restaurants__name">@Html.Raw(restaurantsDelete._name.Caption)</span></th>
+} @* restaurantsDelete._name.Visible (end) *@
+@if (restaurantsDelete.description.Visible) { // restaurantsDelete.description.Visible (begin)
+        <th class="@Html.Raw(restaurantsDelete.description.HeaderCellClass)"><span id="elh_restaurants_description" class="restaurants_description">@Html.Raw(restaurantsDelete.description.Caption)</span></th>
+} @* restaurantsDelete.description.Visible (end) *@
+@if (restaurantsDelete.image.Visible) { // restaurantsDelete.image.Visible (begin)
+        <th class="@Html.Raw(restaurantsDelete.image.HeaderCellClass)"><span id="elh_restaurants_image" class="restaurants_image">@Html.Raw(restaurantsDelete.image.Caption)</span></th>
+} @* restaurantsDelete.image.Visible (end) *@
+@if (restaurantsDelete.created_at.Visible) { // restaurantsDelete.created_at.Visible (begin)
+        <th class="@Html.Raw(restaurantsDelete.created_at.HeaderCellClass)"><span id="elh_restaurants_created_at" class="restaurants_created_at">@Html.Raw(restaurantsDelete.created_at.Caption)</span></th>
+} @* restaurantsDelete.created_at.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ restaurantsDelete.RecordCount = 0; }
+@while (restaurantsDelete.Recordset != null && await restaurantsDelete.Recordset.ReadAsync()) { // DN
+    restaurantsDelete.RecordCount++;
+    restaurantsDelete.RowCount++;
+
+    // Set row properties
+    restaurantsDelete.ResetAttributes();
+    restaurantsDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await restaurantsDelete.LoadRowValues(restaurantsDelete.Recordset);
+
+    // Render row
+    await restaurantsDelete.RenderRow();
+    <tr @Html.Raw(restaurantsDelete.RowAttributes)>
+@if (restaurantsDelete.id.Visible) { // restaurantsDelete.id.Visible (begin)
+        <td @Html.Raw(restaurantsDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(restaurantsDelete.id.ViewAttributes)>
+@Html.Raw(restaurantsDelete.id.GetViewValue())</span>
+</span></td>
+} @* restaurantsDelete.id.Visible (end) *@
+@if (restaurantsDelete._name.Visible) { // restaurantsDelete._name.Visible (begin)
+        <td @Html.Raw(restaurantsDelete._name.CellAttributes)>
+<span id="">
+<span @Html.Raw(restaurantsDelete._name.ViewAttributes)>
+@Html.Raw(restaurantsDelete._name.GetViewValue())</span>
+</span></td>
+} @* restaurantsDelete._name.Visible (end) *@
+@if (restaurantsDelete.description.Visible) { // restaurantsDelete.description.Visible (begin)
+        <td @Html.Raw(restaurantsDelete.description.CellAttributes)>
+<span id="">
+<span @Html.Raw(restaurantsDelete.description.ViewAttributes)>
+@Html.Raw(restaurantsDelete.description.GetViewValue())</span>
+</span></td>
+} @* restaurantsDelete.description.Visible (end) *@
+@if (restaurantsDelete.image.Visible) { // restaurantsDelete.image.Visible (begin)
+        <td @Html.Raw(restaurantsDelete.image.CellAttributes)>
+<span id="">
+<span>
+@Html.Raw(await GetFileViewTag((DbField)restaurantsDelete.image, ConvertToString(restaurantsDelete.image.GetViewValue()), false))
+</span>
+</span></td>
+} @* restaurantsDelete.image.Visible (end) *@
+@if (restaurantsDelete.created_at.Visible) { // restaurantsDelete.created_at.Visible (begin)
+        <td @Html.Raw(restaurantsDelete.created_at.CellAttributes)>
+<span id="">
+<span @Html.Raw(restaurantsDelete.created_at.ViewAttributes)>
+@Html.Raw(restaurantsDelete.created_at.GetViewValue())</span>
+</span></td>
+} @* restaurantsDelete.created_at.Visible (end) *@
+    </tr>
+}
+@{ restaurantsDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(restaurantsDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@restaurantsDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

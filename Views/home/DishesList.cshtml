@@ -1,0 +1,440 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (dishesList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!dishesList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!dishesList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(dishesList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { dishes: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(dishesList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(dishesList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(dishesList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(dishesList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!dishesList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (dishesList.TotalRecords > 0 && dishesList.ExportOptions.Visible) {
+    dishesList.ExportOptions.Render("body");
+}
+@if (dishesList.ImportOptions.Visible) {
+    dishesList.ImportOptions.Render("body");
+}
+@if (dishesList.SearchOptions.Visible) {
+    dishesList.SearchOptions.Render("body");
+}
+@if (dishesList.FilterOptions.Visible) {
+    dishesList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!dishesList.IsExport() || Config.ExportMasterRecord && dishesList.IsExport("print")) {
+if (!Empty(dishesList.DbMasterFilter) && dishesList.CurrentMasterTable == "restaurants") {
+    if (dishesList.MasterRecordExists) {
+        @await Html.PartialAsync("RestaurantsMaster.cshtml")
+    }
+}
+}
+@if (dishesList.ShowCurrentFilter) {
+    dishesList.ShowFilterList();
+}
+@if (!dishesList.IsModal) {
+<form name="fdishessrch" id="fdishessrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fdishessrch_search_panel" class="mb-2 mb-sm-0 @(dishesList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(dishesList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { dishes: currentTable } });
+var currentForm;
+var fdishessrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fdishessrch")
+        .setPageId("list")
+@if (dishesList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Add fields
+        .setFields([
+
+            ["id", [], fields.id.isInvalid],
+            ["_name", [], fields._name.isInvalid],
+            ["description", [], fields.description.isInvalid],
+            ["image", [], fields.image.isInvalid],
+            ["price", [], fields.price.isInvalid],
+            ["restaurant_id", [], fields.restaurant_id.isInvalid],
+            ["created_at", [], fields.created_at.isInvalid]
+        ])
+        // Validate form
+        .setValidate(
+            async function () {
+                if (!this.validateRequired)
+                    return true; // Ignore validation
+                let fobj = this.getForm();
+
+                // Validate fields
+                if (!this.validateFields())
+                    return false;
+
+                // Call Form_CustomValidate event
+                if (!(await this.customValidate?.(fobj) ?? true)) {
+                    this.focus();
+                    return false;
+                }
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+            "restaurant_id": @Html.Raw(dishesList.restaurant_id.ToClientList(dishesList)),
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await dishesList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!dishesList.IsExport() && Empty(dishesList.CurrentAction) && dishesList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0@(dishesList.SearchFieldsPerRow > 0 ? " row-cols-sm-" + dishesList.SearchFieldsPerRow : "")">
+@{
+    // Render search row
+    dishesList.RowType = RowType.Search;
+    dishesList.ResetAttributes();
+    await dishesList.RenderRow();
+}
+@if (dishesList.restaurant_id.Visible) { // dishesList.restaurant_id.Visible (begin)
+    if (!dishesList.restaurant_id.UseFilter) {
+        dishesList.SearchColumnCount++;
+    }
+    <div id="xs_restaurant_id" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(dishesList.restaurant_id.UseFilter ? " ew-filter-field" : "")">
+        <div class="d-flex my-1 my-sm-0">
+            <label for="x_restaurant_id" class="ew-search-caption ew-label">@Html.Raw(dishesList.restaurant_id.Caption)</label>
+            <div class="ew-search-operator">
+@Html.Raw(Language.Phrase("="))
+<input type="hidden" name="z_restaurant_id" id="z_restaurant_id" value="=">
+</div>
+        </div>
+        <div id="el_dishes_restaurant_id" class="ew-search-field">
+    <select
+        id="x_restaurant_id"
+        name="x_restaurant_id"
+        class="form-select ew-select@(dishesList.restaurant_id.IsInvalidClass)"
+        data-select2-id="fdishessrch_x_restaurant_id"
+        data-table="dishes"
+        data-field="x_restaurant_id"
+        data-value-separator="@(dishesList.restaurant_id.DisplayValueSeparatorAttribute)"
+        data-placeholder="@(HtmlEncode(dishesList.restaurant_id.PlaceHolder))"
+        @Html.Raw(dishesList.restaurant_id.EditAttributes)>
+        @(dishesList.restaurant_id.SelectOptionListHtml("x_restaurant_id"))
+    </select>
+    <div class="invalid-feedback">@Html.Raw(dishesList.restaurant_id.GetErrorMessage(false))</div>
+@Html.Raw(dishesList.restaurant_id.Lookup.GetParamTag(dishesList, "p_x_restaurant_id"))
+<script>
+loadjs.ready("fdishessrch", function() {
+    var options = { name: "x_restaurant_id", selectId: "fdishessrch_x_restaurant_id" },
+        el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+    if (!el)
+        return;
+    options.closeOnSelect = !options.multiple;
+    options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+    if (fdishessrch.lists.restaurant_id?.lookupOptions.length) {
+        options.data = { id: "x_restaurant_id", form: "fdishessrch" };
+    } else {
+        options.ajax = { id: "x_restaurant_id", form: "fdishessrch", limit: ew.LOOKUP_PAGE_SIZE };
+    }
+    options.minimumResultsForSearch = Infinity;
+    options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.dishes.fields.restaurant_id.selectOptions);
+    ew.createSelect(options);
+});
+</script>
+</div>
+        <div class="d-flex my-1 my-sm-0">
+        </div><!-- /.ew-search-field -->
+    </div><!-- /.col-sm-auto -->
+} @* dishesList.restaurant_id.Visible (end) *@
+</div><!-- /.row -->
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(dishesList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(dishesList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(dishesList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(dishesList.BasicSearch.SessionType == "" ? " active" : "")" form="fdishessrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(dishesList.BasicSearch.SessionType == "=" ? " active" : "")" form="fdishessrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(dishesList.BasicSearch.SessionType == "AND" ? " active" : "")" form="fdishessrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(dishesList.BasicSearch.SessionType == "OR" ? " active" : "")" form="fdishessrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@dishesList.ShowPageHeader()
+@dishesList.ShowMessages()
+<main class="list @(dishesList.TotalRecords == 0 && !dishesList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (dishesList.TotalRecords > 0 || !Empty(dishesList.CurrentAction)) {
+<div class="card ew-card ew-grid@(dishesList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(dishesList.TableGridClass)">
+@if (!dishesList.IsExport()) {
+<div class="card-header ew-grid-upper-panel">
+@if (!dishesList.IsGridAdd && !(dishesList.IsGridEdit && dishesList.ModalGridEdit) && !dishesList.IsMultiEdit) {
+@Html.Raw(dishesList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@dishesList.OtherOptions.RenderBody()
+</div>
+</div>
+}
+<form name="@(dishesList.FormName)" id="@(dishesList.FormName)" class="ew-form ew-list-form" action="@AppPath(dishesList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (dishesList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+@if (dishesList.CurrentMasterTable == "restaurants" && !Empty(dishesList.CurrentAction)) {
+<input type="hidden" name="@(Config.TableShowMaster)" value="restaurants">
+<input type="hidden" name="fk_id" value="@(HtmlEncode(dishesList.restaurant_id.SessionValue))">
+}
+<div id="gmp_dishes" class="card-body ew-grid-middle-panel @(dishesList.TableContainerClass)" style="@(dishesList.TableContainerStyle)">
+@if (dishesList.TotalRecords > 0 || dishesList.IsGridEdit || dishesList.IsMultiEdit) {
+<table id="tbl_disheslist" class="@(dishesList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    dishesList.RowType = RowType.Header;
+
+    // Render list options
+    await dishesList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@dishesList.ListOptions.RenderHeader("left")
+@if (dishesList.id.Visible) { // dishesList.id.Visible (begin)
+        <th data-name="id" class="@(dishesList.id.HeaderCellClass)"><div id="elh_dishes_id" class="dishes_id">@Html.Raw(dishesList.RenderFieldHeader(dishesList.id))</div></th>
+} @* dishesList.id.Visible (end) *@
+@if (dishesList._name.Visible) { // dishesList._name.Visible (begin)
+        <th data-name="_name" class="@(dishesList._name.HeaderCellClass)"><div id="elh_dishes__name" class="dishes__name">@Html.Raw(dishesList.RenderFieldHeader(dishesList._name))</div></th>
+} @* dishesList._name.Visible (end) *@
+@if (dishesList.description.Visible) { // dishesList.description.Visible (begin)
+        <th data-name="description" class="@(dishesList.description.HeaderCellClass)"><div id="elh_dishes_description" class="dishes_description">@Html.Raw(dishesList.RenderFieldHeader(dishesList.description))</div></th>
+} @* dishesList.description.Visible (end) *@
+@if (dishesList.image.Visible) { // dishesList.image.Visible (begin)
+        <th data-name="image" class="@(dishesList.image.HeaderCellClass)"><div id="elh_dishes_image" class="dishes_image">@Html.Raw(dishesList.RenderFieldHeader(dishesList.image))</div></th>
+} @* dishesList.image.Visible (end) *@
+@if (dishesList.price.Visible) { // dishesList.price.Visible (begin)
+        <th data-name="price" class="@(dishesList.price.HeaderCellClass)"><div id="elh_dishes_price" class="dishes_price">@Html.Raw(dishesList.RenderFieldHeader(dishesList.price))</div></th>
+} @* dishesList.price.Visible (end) *@
+@if (dishesList.restaurant_id.Visible) { // dishesList.restaurant_id.Visible (begin)
+        <th data-name="restaurant_id" class="@(dishesList.restaurant_id.HeaderCellClass)"><div id="elh_dishes_restaurant_id" class="dishes_restaurant_id">@Html.Raw(dishesList.RenderFieldHeader(dishesList.restaurant_id))</div></th>
+} @* dishesList.restaurant_id.Visible (end) *@
+@if (dishesList.created_at.Visible) { // dishesList.created_at.Visible (begin)
+        <th data-name="created_at" class="@(dishesList.created_at.HeaderCellClass)"><div id="elh_dishes_created_at" class="dishes_created_at">@Html.Raw(dishesList.RenderFieldHeader(dishesList.created_at))</div></th>
+} @* dishesList.created_at.Visible (end) *@
+@* Render list options (header, right) *@
+@dishesList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(dishesList.PageNumber)">
+@{
+    await dishesList.SetupGrid();
+    bool eof = dishesList.Recordset == null; // DN
+}
+@while (dishesList.RecordCount < dishesList.StopRecord || SameString(dishesList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(dishesList.RowIndex, "$rowindex$") &&
+        (!dishesList.IsGridAdd || dishesList.CurrentMode == "copy") &&
+        (!((dishesList.IsCopy || dishesList.IsAdd) && dishesList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await dishesList.Recordset.ReadAsync();
+    dishesList.RecordCount++;
+    if (dishesList.RecordCount >= dishesList.StartRecord) {
+        await dishesList.SetupRow();
+    <tr @Html.Raw(dishesList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @dishesList.ListOptions.RenderBody("left", dishesList.RowCount)
+    @if (dishesList.id.Visible) { // dishesList.id.Visible (begin)
+        <td data-name="id" @Html.Raw(dishesList.id.CellAttributes)>
+<span id="el@(dishesList.RowIndex == "$rowindex$" ? "$rowindex$" : dishesList.RowCount)_dishes_id" class="el_dishes_id">
+<span @Html.Raw(dishesList.id.ViewAttributes)>
+@Html.Raw(dishesList.id.GetViewValue())</span>
+</span>
+</td>
+    } @* dishesList.id.Visible (end) *@
+    @if (dishesList._name.Visible) { // dishesList._name.Visible (begin)
+        <td data-name="_name" @Html.Raw(dishesList._name.CellAttributes)>
+<span id="el@(dishesList.RowIndex == "$rowindex$" ? "$rowindex$" : dishesList.RowCount)_dishes__name" class="el_dishes__name">
+<span @Html.Raw(dishesList._name.ViewAttributes)>
+@Html.Raw(dishesList._name.GetViewValue())</span>
+</span>
+</td>
+    } @* dishesList._name.Visible (end) *@
+    @if (dishesList.description.Visible) { // dishesList.description.Visible (begin)
+        <td data-name="description" @Html.Raw(dishesList.description.CellAttributes)>
+<span id="el@(dishesList.RowIndex == "$rowindex$" ? "$rowindex$" : dishesList.RowCount)_dishes_description" class="el_dishes_description">
+<span @Html.Raw(dishesList.description.ViewAttributes)>
+@Html.Raw(dishesList.description.GetViewValue())</span>
+</span>
+</td>
+    } @* dishesList.description.Visible (end) *@
+    @if (dishesList.image.Visible) { // dishesList.image.Visible (begin)
+        <td data-name="image" @Html.Raw(dishesList.image.CellAttributes)>
+<span id="el@(dishesList.RowIndex == "$rowindex$" ? "$rowindex$" : dishesList.RowCount)_dishes_image" class="el_dishes_image">
+<span>
+@Html.Raw(await GetFileViewTag((DbField)dishesList.image, ConvertToString(dishesList.image.GetViewValue()), false))
+</span>
+</span>
+</td>
+    } @* dishesList.image.Visible (end) *@
+    @if (dishesList.price.Visible) { // dishesList.price.Visible (begin)
+        <td data-name="price" @Html.Raw(dishesList.price.CellAttributes)>
+<span id="el@(dishesList.RowIndex == "$rowindex$" ? "$rowindex$" : dishesList.RowCount)_dishes_price" class="el_dishes_price">
+<span @Html.Raw(dishesList.price.ViewAttributes)>
+@Html.Raw(dishesList.price.GetViewValue())</span>
+</span>
+</td>
+    } @* dishesList.price.Visible (end) *@
+    @if (dishesList.restaurant_id.Visible) { // dishesList.restaurant_id.Visible (begin)
+        <td data-name="restaurant_id" @Html.Raw(dishesList.restaurant_id.CellAttributes)>
+<span id="el@(dishesList.RowIndex == "$rowindex$" ? "$rowindex$" : dishesList.RowCount)_dishes_restaurant_id" class="el_dishes_restaurant_id">
+<span @Html.Raw(dishesList.restaurant_id.ViewAttributes)>
+@Html.Raw(dishesList.restaurant_id.GetViewValue())</span>
+</span>
+</td>
+    } @* dishesList.restaurant_id.Visible (end) *@
+    @if (dishesList.created_at.Visible) { // dishesList.created_at.Visible (begin)
+        <td data-name="created_at" @Html.Raw(dishesList.created_at.CellAttributes)>
+<span id="el@(dishesList.RowIndex == "$rowindex$" ? "$rowindex$" : dishesList.RowCount)_dishes_created_at" class="el_dishes_created_at">
+<span @Html.Raw(dishesList.created_at.ViewAttributes)>
+@Html.Raw(dishesList.created_at.GetViewValue())</span>
+</span>
+</td>
+    } @* dishesList.created_at.Visible (end) *@
+    @* Render list options (body, right) *@
+    @dishesList.ListOptions.RenderBody("right", dishesList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(dishesList.RowIndex, "$rowindex$"))
+        dishesList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((dishesList.IsCopy || dishesList.IsAdd) && dishesList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        dishesList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(dishesList.CurrentAction) && !dishesList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ dishesList.CloseRecordset(); }
+@if (!dishesList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!dishesList.IsGridAdd && !(dishesList.IsGridEdit && dishesList.ModalGridEdit) && !dishesList.IsMultiEdit) {
+@Html.Raw(dishesList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@dishesList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@dishesList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@dishesList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!dishesList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("dishes");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

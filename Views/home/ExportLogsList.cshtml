@@ -1,0 +1,335 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (exportLogsList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!exportLogsList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!exportLogsList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(exportLogsList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { export_logs: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(exportLogsList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(exportLogsList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(exportLogsList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(exportLogsList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!exportLogsList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (exportLogsList.TotalRecords > 0 && exportLogsList.ExportOptions.Visible) {
+    exportLogsList.ExportOptions.Render("body");
+}
+@if (exportLogsList.ImportOptions.Visible) {
+    exportLogsList.ImportOptions.Render("body");
+}
+@if (exportLogsList.SearchOptions.Visible) {
+    exportLogsList.SearchOptions.Render("body");
+}
+@if (exportLogsList.FilterOptions.Visible) {
+    exportLogsList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!exportLogsList.IsModal) {
+<form name="fexport_logssrch" id="fexport_logssrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fexport_logssrch_search_panel" class="mb-2 mb-sm-0 @(exportLogsList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(exportLogsList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { export_logs: currentTable } });
+var currentForm;
+var fexport_logssrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fexport_logssrch")
+        .setPageId("list")
+@if (exportLogsList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await exportLogsList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!exportLogsList.IsExport() && Empty(exportLogsList.CurrentAction) && exportLogsList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(exportLogsList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(exportLogsList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(exportLogsList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(exportLogsList.BasicSearch.SessionType == "" ? " active" : "")" form="fexport_logssrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(exportLogsList.BasicSearch.SessionType == "=" ? " active" : "")" form="fexport_logssrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(exportLogsList.BasicSearch.SessionType == "AND" ? " active" : "")" form="fexport_logssrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(exportLogsList.BasicSearch.SessionType == "OR" ? " active" : "")" form="fexport_logssrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@exportLogsList.ShowPageHeader()
+@exportLogsList.ShowMessages()
+<main class="list @(exportLogsList.TotalRecords == 0 && !exportLogsList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (exportLogsList.TotalRecords > 0 || !Empty(exportLogsList.CurrentAction)) {
+<div class="card ew-card ew-grid@(exportLogsList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(exportLogsList.TableGridClass)">
+@if (!exportLogsList.IsExport()) {
+<div class="card-header ew-grid-upper-panel">
+@if (!exportLogsList.IsGridAdd && !(exportLogsList.IsGridEdit && exportLogsList.ModalGridEdit) && !exportLogsList.IsMultiEdit) {
+@Html.Raw(exportLogsList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@exportLogsList.OtherOptions.RenderBody()
+</div>
+</div>
+}
+<form name="@(exportLogsList.FormName)" id="@(exportLogsList.FormName)" class="ew-form ew-list-form" action="@AppPath(exportLogsList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (exportLogsList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_export_logs" class="card-body ew-grid-middle-panel @(exportLogsList.TableContainerClass)" style="@(exportLogsList.TableContainerStyle)">
+@if (exportLogsList.TotalRecords > 0 || exportLogsList.IsGridEdit || exportLogsList.IsMultiEdit) {
+<table id="tbl_export_logslist" class="@(exportLogsList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    exportLogsList.RowType = RowType.Header;
+
+    // Render list options
+    await exportLogsList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@exportLogsList.ListOptions.RenderHeader("left")
+@if (exportLogsList.file_id.Visible) { // exportLogsList.file_id.Visible (begin)
+        <th data-name="file_id" class="@(exportLogsList.file_id.HeaderCellClass)"><div id="elh_export_logs_file_id" class="export_logs_file_id">@Html.Raw(exportLogsList.RenderFieldHeader(exportLogsList.file_id))</div></th>
+} @* exportLogsList.file_id.Visible (end) *@
+@if (exportLogsList.created_at.Visible) { // exportLogsList.created_at.Visible (begin)
+        <th data-name="created_at" class="@(exportLogsList.created_at.HeaderCellClass)"><div id="elh_export_logs_created_at" class="export_logs_created_at">@Html.Raw(exportLogsList.RenderFieldHeader(exportLogsList.created_at))</div></th>
+} @* exportLogsList.created_at.Visible (end) *@
+@if (exportLogsList._username.Visible) { // exportLogsList._username.Visible (begin)
+        <th data-name="_username" class="@(exportLogsList._username.HeaderCellClass)"><div id="elh_export_logs__username" class="export_logs__username">@Html.Raw(exportLogsList.RenderFieldHeader(exportLogsList._username))</div></th>
+} @* exportLogsList._username.Visible (end) *@
+@if (exportLogsList.export_type.Visible) { // exportLogsList.export_type.Visible (begin)
+        <th data-name="export_type" class="@(exportLogsList.export_type.HeaderCellClass)"><div id="elh_export_logs_export_type" class="export_logs_export_type">@Html.Raw(exportLogsList.RenderFieldHeader(exportLogsList.export_type))</div></th>
+} @* exportLogsList.export_type.Visible (end) *@
+@if (exportLogsList.entity.Visible) { // exportLogsList.entity.Visible (begin)
+        <th data-name="entity" class="@(exportLogsList.entity.HeaderCellClass)"><div id="elh_export_logs_entity" class="export_logs_entity">@Html.Raw(exportLogsList.RenderFieldHeader(exportLogsList.entity))</div></th>
+} @* exportLogsList.entity.Visible (end) *@
+@if (exportLogsList.key_value.Visible) { // exportLogsList.key_value.Visible (begin)
+        <th data-name="key_value" class="@(exportLogsList.key_value.HeaderCellClass)"><div id="elh_export_logs_key_value" class="export_logs_key_value">@Html.Raw(exportLogsList.RenderFieldHeader(exportLogsList.key_value))</div></th>
+} @* exportLogsList.key_value.Visible (end) *@
+@if (exportLogsList.filename.Visible) { // exportLogsList.filename.Visible (begin)
+        <th data-name="filename" class="@(exportLogsList.filename.HeaderCellClass)"><div id="elh_export_logs_filename" class="export_logs_filename">@Html.Raw(exportLogsList.RenderFieldHeader(exportLogsList.filename))</div></th>
+} @* exportLogsList.filename.Visible (end) *@
+@if (exportLogsList._request.Visible) { // exportLogsList._request.Visible (begin)
+        <th data-name="_request" class="@(exportLogsList._request.HeaderCellClass)"><div id="elh_export_logs__request" class="export_logs__request">@Html.Raw(exportLogsList.RenderFieldHeader(exportLogsList._request))</div></th>
+} @* exportLogsList._request.Visible (end) *@
+@* Render list options (header, right) *@
+@exportLogsList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(exportLogsList.PageNumber)">
+@{
+    await exportLogsList.SetupGrid();
+    bool eof = exportLogsList.Recordset == null; // DN
+}
+@while (exportLogsList.RecordCount < exportLogsList.StopRecord || SameString(exportLogsList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(exportLogsList.RowIndex, "$rowindex$") &&
+        (!exportLogsList.IsGridAdd || exportLogsList.CurrentMode == "copy") &&
+        (!((exportLogsList.IsCopy || exportLogsList.IsAdd) && exportLogsList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await exportLogsList.Recordset.ReadAsync();
+    exportLogsList.RecordCount++;
+    if (exportLogsList.RecordCount >= exportLogsList.StartRecord) {
+        await exportLogsList.SetupRow();
+    <tr @Html.Raw(exportLogsList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @exportLogsList.ListOptions.RenderBody("left", exportLogsList.RowCount)
+    @if (exportLogsList.file_id.Visible) { // exportLogsList.file_id.Visible (begin)
+        <td data-name="file_id" @Html.Raw(exportLogsList.file_id.CellAttributes)>
+<span id="el@(exportLogsList.RowIndex == "$rowindex$" ? "$rowindex$" : exportLogsList.RowCount)_export_logs_file_id" class="el_export_logs_file_id">
+<span @Html.Raw(exportLogsList.file_id.ViewAttributes)>
+@Html.Raw(exportLogsList.file_id.GetViewValue())</span>
+</span>
+</td>
+    } @* exportLogsList.file_id.Visible (end) *@
+    @if (exportLogsList.created_at.Visible) { // exportLogsList.created_at.Visible (begin)
+        <td data-name="created_at" @Html.Raw(exportLogsList.created_at.CellAttributes)>
+<span id="el@(exportLogsList.RowIndex == "$rowindex$" ? "$rowindex$" : exportLogsList.RowCount)_export_logs_created_at" class="el_export_logs_created_at">
+<span @Html.Raw(exportLogsList.created_at.ViewAttributes)>
+@Html.Raw(exportLogsList.created_at.GetViewValue())</span>
+</span>
+</td>
+    } @* exportLogsList.created_at.Visible (end) *@
+    @if (exportLogsList._username.Visible) { // exportLogsList._username.Visible (begin)
+        <td data-name="_username" @Html.Raw(exportLogsList._username.CellAttributes)>
+<span id="el@(exportLogsList.RowIndex == "$rowindex$" ? "$rowindex$" : exportLogsList.RowCount)_export_logs__username" class="el_export_logs__username">
+<span @Html.Raw(exportLogsList._username.ViewAttributes)>
+@Html.Raw(exportLogsList._username.GetViewValue())</span>
+</span>
+</td>
+    } @* exportLogsList._username.Visible (end) *@
+    @if (exportLogsList.export_type.Visible) { // exportLogsList.export_type.Visible (begin)
+        <td data-name="export_type" @Html.Raw(exportLogsList.export_type.CellAttributes)>
+<span id="el@(exportLogsList.RowIndex == "$rowindex$" ? "$rowindex$" : exportLogsList.RowCount)_export_logs_export_type" class="el_export_logs_export_type">
+<span @Html.Raw(exportLogsList.export_type.ViewAttributes)>
+@Html.Raw(exportLogsList.export_type.GetViewValue())</span>
+</span>
+</td>
+    } @* exportLogsList.export_type.Visible (end) *@
+    @if (exportLogsList.entity.Visible) { // exportLogsList.entity.Visible (begin)
+        <td data-name="entity" @Html.Raw(exportLogsList.entity.CellAttributes)>
+<span id="el@(exportLogsList.RowIndex == "$rowindex$" ? "$rowindex$" : exportLogsList.RowCount)_export_logs_entity" class="el_export_logs_entity">
+<span @Html.Raw(exportLogsList.entity.ViewAttributes)>
+@Html.Raw(exportLogsList.entity.GetViewValue())</span>
+</span>
+</td>
+    } @* exportLogsList.entity.Visible (end) *@
+    @if (exportLogsList.key_value.Visible) { // exportLogsList.key_value.Visible (begin)
+        <td data-name="key_value" @Html.Raw(exportLogsList.key_value.CellAttributes)>
+<span id="el@(exportLogsList.RowIndex == "$rowindex$" ? "$rowindex$" : exportLogsList.RowCount)_export_logs_key_value" class="el_export_logs_key_value">
+<span @Html.Raw(exportLogsList.key_value.ViewAttributes)>
+@Html.Raw(exportLogsList.key_value.GetViewValue())</span>
+</span>
+</td>
+    } @* exportLogsList.key_value.Visible (end) *@
+    @if (exportLogsList.filename.Visible) { // exportLogsList.filename.Visible (begin)
+        <td data-name="filename" @Html.Raw(exportLogsList.filename.CellAttributes)>
+<span id="el@(exportLogsList.RowIndex == "$rowindex$" ? "$rowindex$" : exportLogsList.RowCount)_export_logs_filename" class="el_export_logs_filename">
+<span @Html.Raw(exportLogsList.filename.ViewAttributes)>
+@Html.Raw(exportLogsList.filename.GetViewValue())</span>
+</span>
+</td>
+    } @* exportLogsList.filename.Visible (end) *@
+    @if (exportLogsList._request.Visible) { // exportLogsList._request.Visible (begin)
+        <td data-name="_request" @Html.Raw(exportLogsList._request.CellAttributes)>
+<span id="el@(exportLogsList.RowIndex == "$rowindex$" ? "$rowindex$" : exportLogsList.RowCount)_export_logs__request" class="el_export_logs__request">
+<span @Html.Raw(exportLogsList._request.ViewAttributes)>
+@Html.Raw(exportLogsList._request.GetViewValue())</span>
+</span>
+</td>
+    } @* exportLogsList._request.Visible (end) *@
+    @* Render list options (body, right) *@
+    @exportLogsList.ListOptions.RenderBody("right", exportLogsList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(exportLogsList.RowIndex, "$rowindex$"))
+        exportLogsList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((exportLogsList.IsCopy || exportLogsList.IsAdd) && exportLogsList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        exportLogsList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(exportLogsList.CurrentAction) && !exportLogsList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ exportLogsList.CloseRecordset(); }
+@if (!exportLogsList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!exportLogsList.IsGridAdd && !(exportLogsList.IsGridEdit && exportLogsList.ModalGridEdit) && !exportLogsList.IsMultiEdit) {
+@Html.Raw(exportLogsList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@exportLogsList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@exportLogsList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@exportLogsList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!exportLogsList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("export_logs");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

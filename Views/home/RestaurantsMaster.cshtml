@@ -1,0 +1,62 @@
+@{
+    restaurants.TableClass = "table table-striped table-bordered table-hover table-sm ew-table ew-master-table"; // DN
+}
+@if (restaurants.Visible) { // restaurants.Visible (begin)
+<div class="ew-master-div">
+<table id="tbl_restaurantsmaster" class="table ew-view-table ew-master-table ew-vertical">
+    <tbody>
+        @if (restaurants.id.Visible) { // restaurants.id.Visible (begin)
+        <tr id="r_id" @Html.Raw(restaurants.id.RowAttributes)>
+            <td class="@(restaurants.TableLeftColumnClass)">@Html.Raw(restaurants.id.Caption)</td>
+            <td @Html.Raw(restaurants.id.CellAttributes)>
+<span id="el_restaurants_id">
+<span @Html.Raw(restaurants.id.ViewAttributes)>
+@Html.Raw(restaurants.id.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* restaurants.id.Visible (end) *@
+        @if (restaurants._name.Visible) { // restaurants._name.Visible (begin)
+        <tr id="r__name" @Html.Raw(restaurants._name.RowAttributes)>
+            <td class="@(restaurants.TableLeftColumnClass)">@Html.Raw(restaurants._name.Caption)</td>
+            <td @Html.Raw(restaurants._name.CellAttributes)>
+<span id="el_restaurants__name">
+<span @Html.Raw(restaurants._name.ViewAttributes)>
+@Html.Raw(restaurants._name.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* restaurants._name.Visible (end) *@
+        @if (restaurants.description.Visible) { // restaurants.description.Visible (begin)
+        <tr id="r_description" @Html.Raw(restaurants.description.RowAttributes)>
+            <td class="@(restaurants.TableLeftColumnClass)">@Html.Raw(restaurants.description.Caption)</td>
+            <td @Html.Raw(restaurants.description.CellAttributes)>
+<span id="el_restaurants_description">
+<span @Html.Raw(restaurants.description.ViewAttributes)>
+@Html.Raw(restaurants.description.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* restaurants.description.Visible (end) *@
+        @if (restaurants.image.Visible) { // restaurants.image.Visible (begin)
+        <tr id="r_image" @Html.Raw(restaurants.image.RowAttributes)>
+            <td class="@(restaurants.TableLeftColumnClass)">@Html.Raw(restaurants.image.Caption)</td>
+            <td @Html.Raw(restaurants.image.CellAttributes)>
+<span id="el_restaurants_image">
+<span>
+@Html.Raw(await GetFileViewTag((DbField)restaurants.image, ConvertToString(restaurants.image.GetViewValue()), false))
+</span>
+</span></td>
+        </tr>
+        } @* restaurants.image.Visible (end) *@
+        @if (restaurants.created_at.Visible) { // restaurants.created_at.Visible (begin)
+        <tr id="r_created_at" @Html.Raw(restaurants.created_at.RowAttributes)>
+            <td class="@(restaurants.TableLeftColumnClass)">@Html.Raw(restaurants.created_at.Caption)</td>
+            <td @Html.Raw(restaurants.created_at.CellAttributes)>
+<span id="el_restaurants_created_at">
+<span @Html.Raw(restaurants.created_at.ViewAttributes)>
+@Html.Raw(restaurants.created_at.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* restaurants.created_at.Visible (end) *@
+    </tbody>
+</table>
+</div>
+} @* restaurants.Visible (end) *@

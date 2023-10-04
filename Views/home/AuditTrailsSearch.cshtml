@@ -1,0 +1,373 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (auditTrailsSearch.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!auditTrailsSearch.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(auditTrailsSearch.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { audit_trails: currentTable } });
+var currentPageID = ew.PAGE_ID = "search";
+var currentForm;
+var faudit_trailssearch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("faudit_trailssearch")
+        .setPageId("search")
+@if (auditTrailsSearch.IsModal && auditTrailsSearch.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Add fields
+        .setFields([
+
+            ["id", [ew.Validators.integer], fields.id.isInvalid],
+            ["created_at", [ew.Validators.datetime(fields.created_at.clientFormatPattern)], fields.created_at.isInvalid],
+            ["script", [], fields.script.isInvalid],
+            ["_username", [], fields._username.isInvalid],
+            ["_action", [], fields._action.isInvalid],
+            ["entity", [], fields.entity.isInvalid],
+            ["_field", [], fields._field.isInvalid],
+            ["key_value", [], fields.key_value.isInvalid],
+            ["old_value", [], fields.old_value.isInvalid],
+            ["new_value", [], fields.new_value.isInvalid]
+        ])
+        // Validate form
+        .setValidate(
+            async function () {
+                if (!this.validateRequired)
+                    return true; // Ignore validation
+                let fobj = this.getForm();
+
+                // Validate fields
+                if (!this.validateFields())
+                    return false;
+
+                // Call Form_CustomValidate event
+                if (!(await this.customValidate?.(fobj) ?? true)) {
+                    this.focus();
+                    return false;
+                }
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+@if (auditTrailsSearch.IsModal) {
+    <text>currentAdvancedSearchForm = form;</text>
+} else {
+    <text>currentForm = form;</text>
+}
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@auditTrailsSearch.ShowPageHeader()
+@auditTrailsSearch.ShowMessages()
+<form name="faudit_trailssearch" id="faudit_trailssearch" class="@(auditTrailsSearch.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="search">
+@if (auditTrailsSearch.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div class="ew-search-div"><!-- page* -->
+@if (auditTrailsSearch.id.Visible) { // auditTrailsSearch.id.Visible (begin)
+    <div id="r_id" class="row" @Html.Raw(auditTrailsSearch.id.RowAttributes)>
+        <label for="x_id" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails_id">@Html.Raw(auditTrailsSearch.id.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("="))
+<input type="hidden" name="z_id" id="z_id" value="=">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch.id.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails_id" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch.id.InputTextType)" name="x_id" id="x_id" data-table="audit_trails" data-field="x_id" value="@Html.Raw(auditTrailsSearch.id.EditValue)" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch.id.PlaceHolder))" data-format-pattern="@(auditTrailsSearch.id.FormatPattern)"@Html.Raw(auditTrailsSearch.id.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch.id.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch.id.Visible (end) *@
+@if (auditTrailsSearch.created_at.Visible) { // auditTrailsSearch.created_at.Visible (begin)
+    <div id="r_created_at" class="row" @Html.Raw(auditTrailsSearch.created_at.RowAttributes)>
+        <label for="x_created_at" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails_created_at">@Html.Raw(auditTrailsSearch.created_at.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("="))
+<input type="hidden" name="z_created_at" id="z_created_at" value="=">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch.created_at.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails_created_at" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch.created_at.InputTextType)" name="x_created_at" id="x_created_at" data-table="audit_trails" data-field="x_created_at" value="@Html.Raw(auditTrailsSearch.created_at.EditValue)" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch.created_at.PlaceHolder))" data-format-pattern="@(auditTrailsSearch.created_at.FormatPattern)"@Html.Raw(auditTrailsSearch.created_at.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch.created_at.GetErrorMessage(false))</div>
+@if (!auditTrailsSearch.created_at.ReadOnly && !auditTrailsSearch.created_at.Disabled && !auditTrailsSearch.created_at.EditAttrs.Is("readonly") && !auditTrailsSearch.created_at.EditAttrs.Is("disabled")) {
+<script>
+loadjs.ready(["faudit_trailssearch", "datetimepicker"], function () {
+    let format = "@Html.Raw(DateFormat(11))", // DN
+        options = {
+                localization: {
+                    locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                    hourCycle: format.match(/H/) ? "h24" : "h12",
+                    format,
+                    ...ew.language.phrase("datetimepicker")
+                },
+                display: {
+                    icons: {
+                        previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                        next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                    },
+                    components: {
+                        hours: !!format.match(/h/i),
+                        minutes: !!format.match(/m/),
+                        seconds: !!format.match(/s/i)
+                    },
+                    theme: ew.isDark() ? "dark" : "auto"
+                }
+            };
+    ew.createDateTimePicker("faudit_trailssearch", "x_created_at", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+});
+</script>
+}
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch.created_at.Visible (end) *@
+@if (auditTrailsSearch.script.Visible) { // auditTrailsSearch.script.Visible (begin)
+    <div id="r_script" class="row" @Html.Raw(auditTrailsSearch.script.RowAttributes)>
+        <label for="x_script" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails_script">@Html.Raw(auditTrailsSearch.script.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_script" id="z_script" value="LIKE">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch.script.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails_script" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch.script.InputTextType)" name="x_script" id="x_script" data-table="audit_trails" data-field="x_script" value="@Html.Raw(auditTrailsSearch.script.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch.script.PlaceHolder))" data-format-pattern="@(auditTrailsSearch.script.FormatPattern)"@Html.Raw(auditTrailsSearch.script.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch.script.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch.script.Visible (end) *@
+@if (auditTrailsSearch._username.Visible) { // auditTrailsSearch._username.Visible (begin)
+    <div id="r__username" class="row" @Html.Raw(auditTrailsSearch._username.RowAttributes)>
+        <label for="x__username" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails__username">@Html.Raw(auditTrailsSearch._username.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z__username" id="z__username" value="LIKE">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch._username.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails__username" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch._username.InputTextType)" name="x__username" id="x__username" data-table="audit_trails" data-field="x__username" value="@Html.Raw(auditTrailsSearch._username.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch._username.PlaceHolder))" data-format-pattern="@(auditTrailsSearch._username.FormatPattern)"@Html.Raw(auditTrailsSearch._username.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch._username.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch._username.Visible (end) *@
+@if (auditTrailsSearch._action.Visible) { // auditTrailsSearch._action.Visible (begin)
+    <div id="r__action" class="row" @Html.Raw(auditTrailsSearch._action.RowAttributes)>
+        <label for="x__action" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails__action">@Html.Raw(auditTrailsSearch._action.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z__action" id="z__action" value="LIKE">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch._action.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails__action" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch._action.InputTextType)" name="x__action" id="x__action" data-table="audit_trails" data-field="x__action" value="@Html.Raw(auditTrailsSearch._action.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch._action.PlaceHolder))" data-format-pattern="@(auditTrailsSearch._action.FormatPattern)"@Html.Raw(auditTrailsSearch._action.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch._action.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch._action.Visible (end) *@
+@if (auditTrailsSearch.entity.Visible) { // auditTrailsSearch.entity.Visible (begin)
+    <div id="r_entity" class="row" @Html.Raw(auditTrailsSearch.entity.RowAttributes)>
+        <label for="x_entity" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails_entity">@Html.Raw(auditTrailsSearch.entity.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_entity" id="z_entity" value="LIKE">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch.entity.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails_entity" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch.entity.InputTextType)" name="x_entity" id="x_entity" data-table="audit_trails" data-field="x_entity" value="@Html.Raw(auditTrailsSearch.entity.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch.entity.PlaceHolder))" data-format-pattern="@(auditTrailsSearch.entity.FormatPattern)"@Html.Raw(auditTrailsSearch.entity.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch.entity.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch.entity.Visible (end) *@
+@if (auditTrailsSearch._field.Visible) { // auditTrailsSearch._field.Visible (begin)
+    <div id="r__field" class="row" @Html.Raw(auditTrailsSearch._field.RowAttributes)>
+        <label for="x__field" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails__field">@Html.Raw(auditTrailsSearch._field.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z__field" id="z__field" value="LIKE">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch._field.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails__field" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch._field.InputTextType)" name="x__field" id="x__field" data-table="audit_trails" data-field="x__field" value="@Html.Raw(auditTrailsSearch._field.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch._field.PlaceHolder))" data-format-pattern="@(auditTrailsSearch._field.FormatPattern)"@Html.Raw(auditTrailsSearch._field.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch._field.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch._field.Visible (end) *@
+@if (auditTrailsSearch.key_value.Visible) { // auditTrailsSearch.key_value.Visible (begin)
+    <div id="r_key_value" class="row" @Html.Raw(auditTrailsSearch.key_value.RowAttributes)>
+        <label for="x_key_value" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails_key_value">@Html.Raw(auditTrailsSearch.key_value.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_key_value" id="z_key_value" value="LIKE">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch.key_value.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails_key_value" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch.key_value.InputTextType)" name="x_key_value" id="x_key_value" data-table="audit_trails" data-field="x_key_value" value="@Html.Raw(auditTrailsSearch.key_value.EditValue)" size="35" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch.key_value.PlaceHolder))" data-format-pattern="@(auditTrailsSearch.key_value.FormatPattern)"@Html.Raw(auditTrailsSearch.key_value.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch.key_value.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch.key_value.Visible (end) *@
+@if (auditTrailsSearch.old_value.Visible) { // auditTrailsSearch.old_value.Visible (begin)
+    <div id="r_old_value" class="row" @Html.Raw(auditTrailsSearch.old_value.RowAttributes)>
+        <label for="x_old_value" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails_old_value">@Html.Raw(auditTrailsSearch.old_value.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_old_value" id="z_old_value" value="LIKE">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch.old_value.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails_old_value" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch.old_value.InputTextType)" name="x_old_value" id="x_old_value" data-table="audit_trails" data-field="x_old_value" value="@Html.Raw(auditTrailsSearch.old_value.EditValue)" size="35" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch.old_value.PlaceHolder))" data-format-pattern="@(auditTrailsSearch.old_value.FormatPattern)"@Html.Raw(auditTrailsSearch.old_value.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch.old_value.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch.old_value.Visible (end) *@
+@if (auditTrailsSearch.new_value.Visible) { // auditTrailsSearch.new_value.Visible (begin)
+    <div id="r_new_value" class="row" @Html.Raw(auditTrailsSearch.new_value.RowAttributes)>
+        <label for="x_new_value" class="@(auditTrailsSearch.LeftColumnClass)"><span id="elh_audit_trails_new_value">@Html.Raw(auditTrailsSearch.new_value.Caption)</span>
+        <span class="ew-search-operator">
+@Html.Raw(Language.Phrase("LIKE"))
+<input type="hidden" name="z_new_value" id="z_new_value" value="LIKE">
+</span>
+        </label>
+        <div class="@(auditTrailsSearch.RightColumnClass)">
+            <div @Html.Raw(auditTrailsSearch.new_value.CellAttributes)>
+                <div class="d-flex align-items-start">
+                <span id="el_audit_trails_new_value" class="ew-search-field ew-search-field-single">
+<input type="@(auditTrailsSearch.new_value.InputTextType)" name="x_new_value" id="x_new_value" data-table="audit_trails" data-field="x_new_value" value="@Html.Raw(auditTrailsSearch.new_value.EditValue)" size="35" placeholder="@Html.Raw(HtmlEncode(auditTrailsSearch.new_value.PlaceHolder))" data-format-pattern="@(auditTrailsSearch.new_value.FormatPattern)"@Html.Raw(auditTrailsSearch.new_value.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(auditTrailsSearch.new_value.GetErrorMessage(false))</div>
+</span>
+                </div>
+            </div>
+        </div>
+    </div>
+} @* auditTrailsSearch.new_value.Visible (end) *@
+</div><!-- /page* -->
+@Html.Raw(auditTrailsSearch.IsModal ? Html.Raw("<template class=\"ew-modal-buttons\">") : Html.Raw("<div class=\"row ew-buttons\">"))<!-- buttons .row -->
+    <div class="@(auditTrailsSearch.OffsetColumnClass)"><!-- buttons offset -->
+        <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="faudit_trailssearch">@Html.Raw(Language.Phrase("Search"))</button>
+@if (auditTrailsSearch.IsModal) {
+        <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="faudit_trailssearch">@Html.Raw(Language.Phrase("Cancel"))</button>
+} else {
+        <button class="btn btn-default ew-btn" name="btn-reset" id="btn-reset" type="button" form="faudit_trailssearch" data-ew-action="reload">@Html.Raw(Language.Phrase("Reset"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(auditTrailsSearch.IsModal ? Html.Raw("</template>") : Html.Raw("</div>"))<!-- /buttons .row -->
+</form>
+@auditTrailsSearch.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("audit_trails");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

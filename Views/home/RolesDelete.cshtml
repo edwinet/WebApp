@@ -1,0 +1,145 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (rolesDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!rolesDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(rolesDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { roles: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var frolesdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("frolesdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@rolesDelete.ShowPageHeader()
+@rolesDelete.ShowMessages()
+<form name="frolesdelete" id="frolesdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in rolesDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(rolesDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(rolesDelete.TableContainerClass)" style="@(rolesDelete.TableContainerStyle)">
+<table class="@(rolesDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (rolesDelete.id.Visible) { // rolesDelete.id.Visible (begin)
+        <th class="@Html.Raw(rolesDelete.id.HeaderCellClass)"><span id="elh_roles_id" class="roles_id">@Html.Raw(rolesDelete.id.Caption)</span></th>
+} @* rolesDelete.id.Visible (end) *@
+@if (rolesDelete.role_name.Visible) { // rolesDelete.role_name.Visible (begin)
+        <th class="@Html.Raw(rolesDelete.role_name.HeaderCellClass)"><span id="elh_roles_role_name" class="roles_role_name">@Html.Raw(rolesDelete.role_name.Caption)</span></th>
+} @* rolesDelete.role_name.Visible (end) *@
+@if (rolesDelete.description.Visible) { // rolesDelete.description.Visible (begin)
+        <th class="@Html.Raw(rolesDelete.description.HeaderCellClass)"><span id="elh_roles_description" class="roles_description">@Html.Raw(rolesDelete.description.Caption)</span></th>
+} @* rolesDelete.description.Visible (end) *@
+@if (rolesDelete._type.Visible) { // rolesDelete._type.Visible (begin)
+        <th class="@Html.Raw(rolesDelete._type.HeaderCellClass)"><span id="elh_roles__type" class="roles__type">@Html.Raw(rolesDelete._type.Caption)</span></th>
+} @* rolesDelete._type.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ rolesDelete.RecordCount = 0; }
+@while (rolesDelete.Recordset != null && await rolesDelete.Recordset.ReadAsync()) { // DN
+    rolesDelete.RecordCount++;
+    rolesDelete.RowCount++;
+
+    // Set row properties
+    rolesDelete.ResetAttributes();
+    rolesDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await rolesDelete.LoadRowValues(rolesDelete.Recordset);
+
+    // Render row
+    await rolesDelete.RenderRow();
+    <tr @Html.Raw(rolesDelete.RowAttributes)>
+@if (rolesDelete.id.Visible) { // rolesDelete.id.Visible (begin)
+        <td @Html.Raw(rolesDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(rolesDelete.id.ViewAttributes)>
+@Html.Raw(rolesDelete.id.GetViewValue())</span>
+</span></td>
+} @* rolesDelete.id.Visible (end) *@
+@if (rolesDelete.role_name.Visible) { // rolesDelete.role_name.Visible (begin)
+        <td @Html.Raw(rolesDelete.role_name.CellAttributes)>
+<span id="">
+<span @Html.Raw(rolesDelete.role_name.ViewAttributes)>
+@Html.Raw(rolesDelete.role_name.GetViewValue())</span>
+</span></td>
+} @* rolesDelete.role_name.Visible (end) *@
+@if (rolesDelete.description.Visible) { // rolesDelete.description.Visible (begin)
+        <td @Html.Raw(rolesDelete.description.CellAttributes)>
+<span id="">
+<span @Html.Raw(rolesDelete.description.ViewAttributes)>
+@Html.Raw(rolesDelete.description.GetViewValue())</span>
+</span></td>
+} @* rolesDelete.description.Visible (end) *@
+@if (rolesDelete._type.Visible) { // rolesDelete._type.Visible (begin)
+        <td @Html.Raw(rolesDelete._type.CellAttributes)>
+<span id="">
+<span @Html.Raw(rolesDelete._type.ViewAttributes)>
+@Html.Raw(rolesDelete._type.GetViewValue())</span>
+</span></td>
+} @* rolesDelete._type.Visible (end) *@
+    </tr>
+}
+@{ rolesDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(rolesDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@rolesDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
